@@ -6,10 +6,10 @@ const login = require("../flaticon/login.png");
 const url = require("../flaticon/url.png");
 const analysis = require("../flaticon/analysis.png");
 const edit = require("../flaticon/edit.png");
-const a = require("../flaticon/a.png");
-const b = require("../flaticon/b.png");
-const c = require("../flaticon/c.png");
-const d = require("../flaticon/d.png");
+const a = require("../flaticon/login-description.png");
+const b = require("../flaticon/url-description.png");
+const c = require("../flaticon/analysis-description.png");
+const d = require("../flaticon/edit-description.png");
 
 const next = require("../flaticon/next.png");
 
