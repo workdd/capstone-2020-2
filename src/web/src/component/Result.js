@@ -4,7 +4,7 @@ import { Grid } from "@material-ui/core";
 import ViewerReact from "./ViewerReact";
 import Highlight from "./Highlight";
 import ViewerRank from "./ViewerRank";
-import Seven from "./Seven";
+import Emotions from "./Emotions";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Radio from "@material-ui/core/Radio";
@@ -80,7 +80,7 @@ const Result = (props) => {
   const [keyword, setKeyword] = useState(false);
   const [high, setHigh] = useState(false);
   const [audioNorm, setAudioNrom] = useState(false);
-  const [seven, setSeven] = useState(false);
+  const [emotions, setEmotions] = useState(false);
   const [image, setImage] = useState();
   const [check, setCheck] = useState(false);
   const [time, setTime] = useState(0);
@@ -128,28 +128,28 @@ const Result = (props) => {
       setPosAndNeg(true);
       setKeyword(false);
       setAudioNrom(false);
-      setSeven(false);
+      setEmotions(false);
     } else if (e.target.value === "keword") {
       setPosAndNeg(false);
       setKeyword(true);
       setAudioNrom(false);
-      setSeven(false);
+      setEmotions(false);
     } else if (e.target.value === "audioNorm") {
       setPosAndNeg(false);
       setKeyword(false);
       setAudioNrom(true);
-      setSeven(false);
+      setEmotions(false);
       audio();
-    } else if (e.target.value === "seven") {
+    } else if (e.target.value === "emotions") {
       setPosAndNeg(false);
       setKeyword(false);
       setAudioNrom(false);
-      setSeven(true);
+      setEmotions(true);
     } else {
       setPosAndNeg(false);
       setKeyword(false);
       setAudioNrom(false);
-      setSeven(false);
+      setEmotions(false);
     }
   };
   const moveControl = () => {
@@ -231,9 +231,9 @@ const Result = (props) => {
             label="Positive & Negative"
           />
           <FormControlLabel
-            value="seven"
+            value="emotions"
             control={<StyledRadio />}
-            label="Seven Sentiment"
+            label="Emotions Sentiment"
           />
           <FormControlLabel
             value="keword"
@@ -293,9 +293,9 @@ const Result = (props) => {
         ) : (
           <></>
         )}
-        {seven ? (
+        {emotions ? (
           <Grid xs={6}>
-            <Seven url={props.url}></Seven>
+            <Emotions url={props.url}></Emotions>
           </Grid>
         ) : (
           <></>
