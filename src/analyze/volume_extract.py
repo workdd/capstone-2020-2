@@ -1,9 +1,16 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import os
-import sys
-from moviepy.audio.fx.all import *
 from moviepy.editor import *
+
+
+def print_point_hhmmss(point):
+    for i in range(len(point)):
+        seconds = point[i][0]
+        hours = seconds // (60 * 60)
+        seconds %= (60 * 60)
+        minutes = seconds // 60
+        seconds %= 60
+        print("%02i:%02i:%02i" % (hours, minutes, seconds), point[i][1])
 
 
 # volumesPerMinute 그래프 + 적정 volume level을 표시하여 저장
@@ -71,3 +78,16 @@ def sound_extract(platform, videoID, time_range=30, filetype="audio"):
 
     audio.close()
     return volumesPerMinute
+
+
+def analyze1_sound(volume, time_range=30):
+    second = []
+    for i in range(len(volume)):
+        second.append((i*time_range, volume[i]))
+
+    second.sort(key=lambda ele: ele[1], reverse=True)
+    point = second[0:3]
+    point.sort(key=lambda ele: ele[0])
+
+    print_point_hhmmss(point)
+    return point

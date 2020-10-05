@@ -10,7 +10,6 @@ from models.highlight import SoundHighlight
 from settings.utils import api
 from download.audio import *
 from analyze.volume_extract import *
-from analyze.analysis import *
 from api.ana_url import split_url
 
 app = Blueprint('SNDhighlight', __name__, url_prefix='/api')
