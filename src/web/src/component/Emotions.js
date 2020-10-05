@@ -360,15 +360,16 @@ const Emotions = (props) => {
                         }
                     }
                     for (i = 99; i > 0; i--) {
-                        if (
-                            state.dataLine.datasets[0].data[i] === 0 &&
-                            state.dataLine.datasets[1].data[i] === 0 &&
-                            state.dataLine.datasets[2].data[i] === 0 &&
-                            state.dataLine.datasets[3].data[i] === 0 &&
-                            state.dataLine.datasets[4].data[i] === 0 &&
-                            state.dataLine.datasets[5].data[i] === 0 &&
-                            state.dataLine.datasets[6].data[i] === 0
-                        ) {
+
+                        let isEmpty = true;
+                        for (let emoidx = 0; emoidx < datasets.length; emoidx++) {
+                            if (state.dataLine.datasets[emoidx].data[i] !== 0) {
+                                isEmpty = false;
+                                break;
+                            }
+                        }
+
+                        if (isEmpty) {
                             state.dataLine.labels.splice(i, 1);
 
                             for (let emo = 0; emo < datasets.length; emo++) {
