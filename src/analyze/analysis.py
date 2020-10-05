@@ -1,4 +1,3 @@
-import numpy as np
 from konlpy.tag import Okt
 import operator
 
@@ -36,91 +35,50 @@ def print_section_hhmmss(section):
         print()
 
 
-def analyze1(data, comment=None):  # 초당 채팅 수 계산
-    second = []
-    if comment is None:
-        # 채팅 기록에서 모든 comment의 시간 추출
-        for i in range(len(data)):
-            second.append(int(data[i][0]))
-    else:
-        # 채팅 기록에서 특정 comment가 포함된 채팅 시간 추출
-        for i in range(len(data)):
-            if comment in data[i][2]:
-                second.append(int(data[i][0]))
+def analyze1_chatlog(data, unit_of_time=30):
+    count_second = [0 for i in range(data[-1][0] + 1)]
+    for i in range(len(data)):
+        count_second[data[i][0]] += 1
+
+    count_unit = []
+    for i in range(0, len(count_second), unit_of_time):  # time_range 초 단위로 쪼개서 단위 시간 내 가장 큰 값 추출
+        if len(count_second) - i < unit_of_time:
+            count_unit.append(max(count_second[i:len(count_second)]))
+        else:
+            count_unit.append(max(count_second[i:i + unit_of_time]))
 
     count = []
-    for i in range(int(data[len(data) - 1][0]) + 1):
-        count.append(0)
+    for i in range(len(count_unit)):
+        count.append([i*unit_of_time, count_unit[i]]) # [시간, 채팅량 ]
 
-    for x in second:
-        count[x] += 1
+    count.sort(key=lambda ele: ele[1], reverse=True)
+    point = count[0:10]
 
-    average = np.mean(np.array(count))
+    i = 0
+    while i < len(point)-1:
+        j = i+1
+        while j < len(point):
+            if abs(point[i][0]-point[j][0]) <= 300: # 간격이 5분 이하이면 제거
+                del point[j]
+            else:
+                j += 1
+        i += 1
 
-    # 오름차순으로 정렬한 후 10 번째로 많은 채팅 수를 구함
-    sorted_list = sorted(count)
-    max10th = sorted_list[-10]
-
-    point = []
-    for i in range(len(count)):
-        if count[i] >= max10th:
-            point.append((i, count[i]))
-
-    #visualization(count)
-    print_point_hhmmss(point)
-    return point
-
-
-def analyze1_minute(data, comment=None):#분단위로 쪼개고 해당 단위시간(분) 내에 가장 채팅이 많은 지점(초)을 리턴
-    second = []
-    if comment is None:
-        # 채팅 기록에서 모든 comment의 시간 추출
-        for i in range(len(data)):
-            second.append(int(data[i][0]))
+    if len(point) < 3:
+        point = count[0:3]
     else:
-        # 채팅 기록에서 특정 comment가 포함된 채팅 시간 추출
-        for i in range(len(data)):
-            if comment in data[i][2]:
-                second.append(int(data[i][0]))
-
-    count = []
-    for i in range(int(data[len(data) - 1][0]) + 1):
-        count.append(0)
-
-    for x in second:
-        count[x] += 1
-
-    minute = []
-    cut = 0  # 60초 단위로 쪼개기 위한 변수
-    while True:
-        try:
-            arr = count[cut:cut + 60]
-            minute.append((arr.index(max(arr)) + cut, max(arr)))  # (시간(초),채팅량) 튜플로 저장
-            cut += 60
-        except:
-            break
-
-    minute.sort(key=lambda ele: ele[1], reverse=True)
-    point = minute[0:3]
+        point = point[0:3]
     point.sort(key=lambda ele: ele[0])
-
     print_point_hhmmss(point)
     return point
 
 
 def analyze1_keyword(data, keyword):
-    minute = []
-
-    for i in range(len(data)): # 채팅 기록에서 특정 keyword가 포함된 채팅 시간(분) 추출
+    count = [0 for i in range(int(data[-1][0] / 60) + 1)]
+    # 채팅 기록에서 특정 keyword가 포함된 채팅 시간 추출
+    for i in range(len(data)):
         if keyword in data[i][2]:
-            minute.append(int(data[i][0]/60))
-
-    count = []
-    for i in range(minute[-1] + 1):
-        count.append(0)
-
-    for x in minute:
-        count[x] += 1
+            count[int(data[i][0] / 60)] += 1
 
     section = []
     max_value = max(count)
