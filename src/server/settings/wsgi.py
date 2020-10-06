@@ -3,13 +3,14 @@ from flask_cors import CORS
 from werkzeug.exceptions import *
 
 from api.chatlog_highlight import app as api_chatlog_highlight
-from api.sound_highlight import app as api_sndhighlight
-from api.predict import app as api_predict
-from api.predict7 import app as api_predict7
-from api.SNDnormalize import app as api_sndnormalize
+from api.chatlog_keyword import app as api_chatlog_keyword
+from api.sound_highlight import app as api_sound_highlight
+from api.sound_normalize import app as api_sound_normalize
+from api.predict_sentiments import app as api_predict_sentiments
+from api.predict_emotions import app as api_predict_emotions
 from api.account import app as api_account
 from api.ana_url import app as api_analysis
-from api.chatlog import app as api_chatlog
+
 from api.file import app as api_file
 from api.login import app as api_login
 from api.server import app as api_server
@@ -31,14 +32,14 @@ def create_wsgi():
     app.register_blueprint(api_server)
     app.register_blueprint(api_test)
     app.register_blueprint(api_login)
-    app.register_blueprint(api_chatlog)
-    app.register_blueprint(api_sndnormalize)
+    app.register_blueprint(api_chatlog_keyword)
+    app.register_blueprint(api_sound_normalize)
     app.register_blueprint(api_analysis)
     app.register_blueprint(api_account)
-    app.register_blueprint(api_predict)
-    app.register_blueprint(api_predict7)
+    app.register_blueprint(api_predict_emotions)
+    app.register_blueprint(api_predict_sentiments)
     app.register_blueprint(api_file)
-    app.register_blueprint(api_sndhighlight)
+    app.register_blueprint(api_sound_highlight)
     app.register_blueprint(api_chatlog_highlight)
 
     CORS(app)
