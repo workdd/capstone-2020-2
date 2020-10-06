@@ -36,7 +36,7 @@ def get_chatlog_highlight(data, db):
 
         log = download(url_result[0], url_result[1])
 
-        point = analyze1_minute(log)
+        point = analyze1_chatlog(log)
 
         result = {"highlight": point}
 
