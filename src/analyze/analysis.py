@@ -2,13 +2,74 @@ from konlpy.tag import Okt
 import operator
 
 
+def convert_from_seconds_to_time_stamp(seconds):
+    """
+    Input
+    - seconds
+        type : Int
+        default : None
+    Output
+    - hours, minutes, seconds
+        type : int, int, int
+
+    """
+    hours = seconds // (60 * 60)
+    seconds %= (60 * 60)
+    minutes = seconds // 60
+    seconds %= 60
+
+    return hours, minutes, seconds
+
+
+
+def extract_time_information(point, time_type="point", index=0, sub_index=0):
+    """
+    Input
+    - point
+        type : TimeStamp
+        default : None
+    - time_type
+        type : string
+        default : point
+        else: section
+    - index
+        type : Integer
+        default : 0
+        else : time point to analyze
+    - sub_index
+        type : Integer
+        default : 0
+        else : 1
+    Output
+    - time-stamp
+        time_type == point
+            hours, minutes, seconds
+                hours : int
+                minutes : int
+                seconds : int
+
+        time_type == section
+            section [start_time_point, end_time_point]
+
+    """
+
+    if time_type == 'point':
+        hours, minutes, seconds = convert_from_seconds_to_time_stamp(point[index][0])
+
+        return hours, minutes, seconds
+
+    elif time_type == 'section':
+        section = []
+        for i in range(2):
+            section.append([convert_from_seconds_to_time_stamp(point([index][2][sub_index][i])
+        
+        return section
+
+
+
 def print_point_hhmmss(point):
     for i in range(len(point)):
-        seconds = point[i][0]
-        hours = seconds // (60 * 60)
-        seconds %= (60 * 60)
-        minutes = seconds // 60
-        seconds %= 60
+        hours, minutes, seconds = extract_time_information(point[i][0], time_type='point', index=i)
         print("%02i:%02i:%02i" % (hours, minutes, seconds), point[i][1])
 
 
@@ -17,21 +78,13 @@ def print_section_hhmmss(section):
         print("{:<3}".format(i+1), end='\t')
         print("{:<15}".format(section[i][0]), end='\t')
         print("{:<15}".format(section[i][1]), end='\t')
-        j = 0
-        while j < len(section[i][2]):
+        for j in range(0, len(section[i][2], 2):
             seconds = int(section[i][2][j][0])
-            hours = seconds // (60 * 60)
-            seconds %= (60 * 60)
-            minutes = seconds // 60
-            seconds %= 60
-            print("%02i:%02i:%02i" % (hours, minutes, seconds), end='-')
-            seconds = int(section[i][2][j][1])
-            hours = seconds // (60 * 60)
-            seconds %= (60 * 60)
-            minutes = seconds // 60
-            seconds %= 60
-            print("%02i:%02i:%02i" % (hours, minutes, seconds), end='\t')
-            j += 2
+            start_point, end_point = extract_time_information(section[i][2][j][0], time_type='section', 
+                                                              index=i, sub_index=j)
+
+            print("%02i:%02i:%02i-%02i:%02i:%02i" % (start_point[0], start_point[1], start_point[2],
+                                                     end_point[0], end_point[1], end_point[2]))
         print()
 
 
