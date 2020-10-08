@@ -15,8 +15,7 @@ def visualization(chatlist):
 
 
 def count_chat_each_second(platform, videoID):
-    filename = "./chatlog/"+platform+"_"+videoID+".txt"
-    with open(filename, 'r', encoding='utf-8') as f:
+    with open(f"./chatlog/{platform}/{videoID}.txt", 'r', encoding='utf-8') as f:
         data = f.readlines()
         chats=[0 for _ in range(int(data[-1].split(' ')[0][1:-1])+1)]
         for i in data:
@@ -215,14 +214,23 @@ def youtube(videoID):
 
 
 def download(platform, videoID):
-    if not os.path.exists("./chatlog"):
-        os.makedirs("./chatlog")
-    if platform + '_' + videoID + ".txt" in os.listdir("./chatlog"):
+    flag = False
+    if not os.path.exists(f"./chatlog/{platform}"):
+        os.makedirs(f"./chatlog/{platform}")
+    if videoID + ".txt" in os.listdir(f"./chatlog/{platform}"):
         print('This chatlog file has already been requested.')
+        flag = True
 
-    if platform == "AfreecaTV":
-        return afreeca(videoID)
-    elif platform == "Twitch":
-        return twitch(videoID)
-    elif platform == "Youtube":
-        return youtube(videoID)
+    if flag:
+        with open(f"./chatlog/{platform}/{videoID}.txt", r) as f:
+            data = f.read_lines() 
+        return data
+    
+    else:
+        if platform == "AfreecaTV":
+            return afreeca(videoID)
+        elif platform == "Twitch":
+            return twitch(videoID)
+        elif platform == "Youtube":
+            return youtube(videoID)
+
