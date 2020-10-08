@@ -9,8 +9,7 @@ from api.sound_normalize import app as api_sound_normalize
 from api.predict_sentiments import app as api_predict_sentiments
 from api.predict_emotions import app as api_predict_emotions
 from api.account import app as api_account
-from api.ana_url import app as api_analysis
-
+from api.ana_url import app as api_analysis_url
 from api.file import app as api_file
 from api.login import app as api_login
 from api.server import app as api_server
@@ -34,7 +33,7 @@ def create_wsgi():
     app.register_blueprint(api_login)
     app.register_blueprint(api_chatlog_keyword)
     app.register_blueprint(api_sound_normalize)
-    app.register_blueprint(api_analysis)
+    app.register_blueprint(api_analysis_url)
     app.register_blueprint(api_account)
     app.register_blueprint(api_predict_emotions)
     app.register_blueprint(api_predict_sentiments)
