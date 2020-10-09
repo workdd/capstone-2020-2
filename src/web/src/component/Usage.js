@@ -56,7 +56,6 @@ const Usage = () => {
         <Grid container className={classes.root} spacing={3}>
           <img src={login} style={img_style}/>
           <img src={next} style={arrow_style}/>
-k
           <img src={url} style={img_style}/>
           <img src={next} style={arrow_style}/>
 
