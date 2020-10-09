@@ -1,6 +1,7 @@
 import {Grid, Typography} from "@material-ui/core";
 import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
+import ViewerReact from "./ViewerReact";
 
 const login = require("../flaticon/login.png");
 const url = require("../flaticon/url.png");
@@ -54,15 +55,19 @@ const Usage = () => {
       <div>
         <div style={{height: "40px"}}></div>
         <Grid container className={classes.root} spacing={3}>
-          <img src={login} style={img_style}/>
-          <img src={next} style={arrow_style}/>
-          <img src={url} style={img_style}/>
-          <img src={next} style={arrow_style}/>
-
-          <img src={analysis} style={img_style}/>
-          <img src={next} style={arrow_style}/>
-
-          <img src={edit} style={img_style}/>
+            {images.map((image, idx) =>{
+                return (
+                    <div>
+                        <img src={image} style={img_info_style}/>
+                        {idx !== images.length ? (
+                            <img src={next} style={arrow_style}/>
+                        ) : (
+                                <></>
+                            )}
+                        }
+                    </div>
+            )
+            })}
         </Grid>
         <Grid container className={classes.root} spacing={3}>
           {descriptions.map((description, idx) => <img src={description} style={img_info_style}/>)}
