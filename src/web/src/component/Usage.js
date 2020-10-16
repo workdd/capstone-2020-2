@@ -59,7 +59,7 @@ const Usage = () => {
                 return (
                     <div>
                         <img src={image} style={img_info_style}/>
-                        {idx !== images.length ? (
+                        {idx !== images.length - 1 ? (
                             <img src={next} style={arrow_style}/>
                         ) : (
                                 <></>
