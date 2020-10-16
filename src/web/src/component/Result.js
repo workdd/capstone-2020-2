@@ -161,9 +161,9 @@ const Result = (props) => {
         for (let idx = 0; idx < setter.length; idx++) {
             if (e.target.value === setter[idx].key) {
                 setPosAndNeg(setter[idx].set[0]);
-                setKeyword(setter[idx].set[0]);
-                setAudioNrom(setter[idx].set[0]);
-                setEmotions(setter[idx].set[0]);
+                setKeyword(setter[idx].set[1]);
+                setAudioNrom(setter[idx].set[2]);
+                setEmotions(setter[idx].set[3]);
                 if (setter[idx].key === "audioNorm") {
                     audio()
                 }
