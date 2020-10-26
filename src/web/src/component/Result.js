@@ -101,7 +101,7 @@ const Result = (props) => {
     const audio = () => {
         try {
             axios
-                .get("http://13.209.112.92:8000/api/SNDnormalize", {
+                .get("http://localhost:8000/api/SNDnormalize", {
                     headers: {"Content-Type": "multipart/form-data"},
                     params: {
                         url: props.url,

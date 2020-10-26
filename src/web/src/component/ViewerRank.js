@@ -105,7 +105,7 @@ const ViewerRank = (props) => {
     // console.log(props);
     try {
       axios
-        .get("http://13.209.112.92:8000/api/chatlog", {
+        .get("http://localhost:8000/api/chatlog", {
           headers: { "Content-Type": "multipart/form-data" },
           params: {
             platform: props.platform,

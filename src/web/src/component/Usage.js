@@ -58,13 +58,13 @@ const Usage = () => {
             {images.map((image, idx) =>{
                 return (
                     <div>
-                        <img src={image} style={img_info_style}/>
+                        <img src={image} style={img_style}/>
                         {idx !== images.length - 1 ? (
                             <img src={next} style={arrow_style}/>
                         ) : (
                                 <></>
                             )}
-                        }
+              
                     </div>
             )
             })}
