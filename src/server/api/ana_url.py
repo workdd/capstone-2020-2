@@ -1,6 +1,6 @@
 import urllib.request
 import re
-from api.non_url import *
+from api.Non_url import *
 from flask import Blueprint, jsonify
 from werkzeug.exceptions import BadRequest
 from settings.utils import api
