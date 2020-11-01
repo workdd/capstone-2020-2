@@ -22,7 +22,8 @@
     "react-scripts": "3.4.1",
     "redux": "^4.0.5",
     "shaka-player": "^2.5.11",
-    "video-react": "^0.14.1"
+    "video-react": "^0.14.1",
+    "react-chartjs-2": "^2.10.0"
   },
   "scripts": {
     "start": "react-scripts start",
