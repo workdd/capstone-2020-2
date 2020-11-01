@@ -47,7 +47,7 @@ const Login = (props) => {
     frd.append("pw", password);
     try {
       axios
-        .post("http://13.209.112.92:8000/api/login", frd, {
+        .post("http://localhost:8000/api/login", frd, {
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
         })
         .then((response) => {
