@@ -3,7 +3,7 @@ import Button from "@material-ui/core/Button";
 import axios from "axios";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
-import cookie from 'react-cookie';
+import cookie from 'react-cookies';
 
 const InputUrl = (props) => {
   const [url, setUrl] = useState();
@@ -59,7 +59,7 @@ const InputUrl = (props) => {
           // console.log(data);
 
           // localStorage.setItem("loginStorage", JSON.stringify(data));
-          cookie.save('data',JSON.stringify(data),{path:'/'});
+          cookie.save('data',JSON.stringify(data),{path:'/'})
           // props.toggleInput(true);
           // props.setUrl(url);
           if (props.input === true) {
@@ -74,8 +74,7 @@ const InputUrl = (props) => {
         })
         .catch(function (error) {
           if (error.response.status === 401) {
-            // localStorage.removeItem("loginStorage");
-            cookie.remove('data');
+            localStorage.removeItem("loginStorage");
             props.toggleLogin(false);
             props.toggleInput(false);
             alert("please, you need sign in again.");

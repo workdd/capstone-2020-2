@@ -10,7 +10,7 @@ import SignUp from "./SignUp";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import cookie from 'react-cookie';
+import cookie from 'react-cookies'
 
 const useStyles = makeStyles((theme) => ({
   paper: {

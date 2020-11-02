@@ -7,7 +7,7 @@ import InputUrl from "../component/InputUrl";
 import Login from "../component/Login";
 import Result from "../component/Result";
 import Usage from "../component/Usage";
-import cookie from 'react-cookie';
+import cookie from 'react-cookies';
 
 function Copyright() {
     return (
@@ -30,8 +30,6 @@ const MainPage = () => {
     const [videoid, setVideoid] = useState();
     const [url, setUrl] = useState();
     const [name, setName] = useState();
-
-    // const temp = localStorage.getItem("loginStorage");
     const temp = cookie.load('data');
     const test = () => {
         try {
