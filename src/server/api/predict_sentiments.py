@@ -1,15 +1,14 @@
-import json
-import math
-import multiprocessing
-import sys
-import numpy
-from flask import Blueprint, jsonify
-from werkzeug.exceptions import BadRequest
+
+from analyze.chat import *
 from api.ana_url import split_url
 from chatsentiment.pos_neg_spm import predict_pos_neg
-from download.chatlog import download
+from werkzeug.exceptions import BadRequest
 from models.highlight import Predict
 from settings.utils import api
+from flask import Blueprint, jsonify
+import numpy
+import math
+import sys
 
 sys.path.append('../')
 
@@ -18,8 +17,6 @@ app = Blueprint('predict', __name__, url_prefix='/api')
 @app.route('/predict', methods=['GET'])
 @api
 def get_predict(data, db):
-    manager = multiprocessing.Manager()
-    returnDict = manager.dict()
     url = data['url']
     isURLValid = split_url(url)
 
@@ -33,9 +30,10 @@ def get_predict(data, db):
     if query:
         return query.predict_json
 
-    download(isURLValid[0], isURLValid[1])
+    chat = Chat(isURLValid[0], isURLValid[1])
+    chat.download()
 
-    with open('./chatlog/{}_{}.txt'.format(isURLValid[0], isURLValid[1]), encoding='utf-8') as f:
+    with open('./chatlog/{}/{}.txt'.format(isURLValid[0], isURLValid[1]), encoding='utf-8') as f:
         content = f.read().split('\n')
 
     second = []
