@@ -10,6 +10,7 @@ import SignUp from "./SignUp";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import cookie from 'react-cookie';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -53,7 +54,8 @@ const Login = (props) => {
         .then((response) => {
           const data = response.data;
           // console.log(data);
-          localStorage.setItem("loginStorage", JSON.stringify(data));
+          // localStorage.setItem("loginStorage", JSON.stringify(data));
+          cookie.save('data',JSON.stringify(data),{path:'/'});
           props.setEmail(email);
           props.setName(data.name);
           props.toggleLogin(true);

@@ -14,6 +14,8 @@
     "axios": "^0.19.2",
     "mdbreact": "^4.25.6",
     "react": "^16.13.1",
+    "react-chartjs-2": "^2.10.0",
+    "react-cookie": "^4.0.3",
     "react-dom": "^16.13.1",
     "react-google-charts": "^3.0.15",
     "react-load-image": "^0.1.7",
@@ -22,8 +24,7 @@
     "react-scripts": "3.4.1",
     "redux": "^4.0.5",
     "shaka-player": "^2.5.11",
-    "video-react": "^0.14.1",
-    "react-chartjs-2": "^2.10.0"
+    "video-react": "^0.14.1"
   },
   "scripts": {
     "start": "react-scripts start",

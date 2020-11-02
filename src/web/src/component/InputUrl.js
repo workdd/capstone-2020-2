@@ -3,11 +3,13 @@ import Button from "@material-ui/core/Button";
 import axios from "axios";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
+import cookie from 'react-cookie';
 
 const InputUrl = (props) => {
   const [url, setUrl] = useState();
 
-  const temp = localStorage.getItem("loginStorage");
+  // const temp = localStorage.getItem("loginStorage");
+  const temp = cookie.load('data');
 
   const checkUrl = () => {
     try {
@@ -35,7 +37,7 @@ const InputUrl = (props) => {
             alert("wrong url. please, check url.");
           }
           // console.log(error);
-          
+
         });
     } catch (e) {
       console.log(e);
@@ -55,7 +57,9 @@ const InputUrl = (props) => {
         .then((response) => {
           const data = response.data;
           // console.log(data);
-          localStorage.setItem("loginStorage", JSON.stringify(data));
+
+          // localStorage.setItem("loginStorage", JSON.stringify(data));
+          cookie.save('data',JSON.stringify(data),{path:'/'});
           // props.toggleInput(true);
           // props.setUrl(url);
           if (props.input === true) {
@@ -70,7 +74,8 @@ const InputUrl = (props) => {
         })
         .catch(function (error) {
           if (error.response.status === 401) {
-            localStorage.removeItem("loginStorage");
+            // localStorage.removeItem("loginStorage");
+            cookie.remove('data');
             props.toggleLogin(false);
             props.toggleInput(false);
             alert("please, you need sign in again.");
@@ -105,7 +110,7 @@ const InputUrl = (props) => {
             }}
           />
         </Grid>
-        
+
         <Grid>
           <Button variant="contained" color="secondary" onClick={onClick}>
             Input URL
