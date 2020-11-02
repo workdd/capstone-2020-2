@@ -46,7 +46,7 @@ class Audio(Data):
         audio = self.load_audio(filetype)
 
         sr = audio.fps  # 샘플링 레이트
-        cut = lambda x: audio.subclip(x, x + 1).to_soundarray(fps=audio.fps)  # 1초에 해당하는 데이터를 뽑는 람다함수
+        cut = lambda x: audio.subclip(x, x + 1).to_soundarray(fps=sr)  # 1초에 해당하는 데이터를 뽑는 람다함수
         volume = lambda array: np.sqrt(((1.0 * array) ** 2).mean())  # 음압 -> 음량 변환하는 람다함수
 
         volumes = []
