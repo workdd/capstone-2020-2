@@ -15,8 +15,8 @@ class Chat(Data):
     def __init__(self, platform, video_id):
         self.platform = platform
         self.video_id = video_id
-        self.data = None
-        self.chatlog = None
+        self.data = []
+        self.chatlog = []
         self.unit_of_time = 30
         self.point = None
         self.section = None
@@ -27,7 +27,6 @@ class Chat(Data):
 
         if self.video_id + ".txt" in os.listdir(f"./chatlog/{self.platform}"):
             print('This chatlog file has already been requested.')
-            self.chatlog = []
             with open(f"./chatlog/{self.platform}/{self.video_id}.txt", encoding='utf-8') as f:
                 line = f.read().split('\n')
             for i in range(0, len(line) - 1):
@@ -48,7 +47,6 @@ class Chat(Data):
         for i in range(len(self.chatlog)):
             count[self.chatlog[i][0]] += 1
 
-        self.data = []
         for i in range(0, len(count), self.unit_of_time):  # time_range 초 단위로 쪼개서 단위 시간 내 가장 큰 값 추출
             if len(count) - i < self.unit_of_time:
                 self.data.append(max(count[i:len(count)]))
@@ -58,9 +56,7 @@ class Chat(Data):
 
 
     def afreeca(self):  # 아프리카 채팅기록을 튜플로 추출하는 함수
-        self.chatlog = []
         url = "http://vod.afreecatv.com/PLAYER/STATION/" + self.video_id
-        info_url = "http://afbbs.afreecatv.com:8080/api/video/get_video_info.php?"
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36"
 
         # StationNo(방송국 ID, 방송국에 여러 BJ 소속가능)와 nBbsNo(게시판 ID, 방송국 홈피에 여러 게시판 존재) 찾기
@@ -68,11 +64,9 @@ class Chat(Data):
         dom = BeautifulSoup(html.text, 'lxml')
 
         metatag = dom.select_one("meta[property='og:video']")['content']
-        station_id = re.search(r"nStationNo=[0-9]+", metatag).group()
-        station_id = station_id[11:]
-        bbs_id = re.search(r"nBbsNo=[0-9]+", metatag).group()
-        bbs_id = bbs_id[7:]
-        info_url += ("nTitleNo=" + str(self.video_id) + "&nStationNo=" + str(station_id) + "&nBbsNo=" + str(bbs_id))
+        station_id = str(re.search(r"nStationNo=[0-9]+", metatag).group()[11:])
+        bbs_id = str(re.search(r"nBbsNo=[0-9]+", metatag).group()[7:])
+        info_url = "http://afbbs.afreecatv.com:8080/api/video/get_video_info.php?" + "nTitleNo=" + self.video_id + "&nStationNo=" + station_id + "&nBbsNo=" + bbs_id
 
         # rowKey 찾기(동영상 하나에 1개 이상 존재)
         xml = requests.get(info_url, params=None, headers={'user-agent': user_agent})
@@ -99,11 +93,10 @@ class Chat(Data):
                 self.chatlog.extend(
                     zip(map(lambda x: math.trunc(float(x.text)) + duration_list[idx], xmltree.findall('chat/t')),
                         map(lambda x: x.text, xmltree.findall('chat/u')),
-                        map(lambda x: x.text, xmltree.findall('chat/m'))))
+                        map(lambda x: x.text.replace('\n', ''), xmltree.findall('chat/m'))))
                 i += 1
 
     def twitch(self):  # 트위치 채팅기록을 리스트로 추출하는 함수
-        self.chatlog = []
         url = 'https://api.twitch.tv/v5/videos/' + self.video_id + '/comments'
         client_id = "x7cy2lvfh9aob9oyset31dhbfng1tc"
 
@@ -119,7 +112,7 @@ class Chat(Data):
             for k in range(0, len(j["comments"])):
                 time = math.trunc(float(j["comments"][k]["content_offset_seconds"]))
                 user = j["comments"][k]["commenter"]["display_name"]
-                comment = j["comments"][k]["message"]["body"]
+                comment = j["comments"][k]["message"]["body"].replace('\n', '')
                 self.chatlog.append([time, user, comment])
 
             if '_next' not in j:
@@ -128,14 +121,13 @@ class Chat(Data):
             param = {"cursor": j["_next"]}
 
     def youtube(self):
-        self.chatlog = []
         url = "https://www.youtube.com/watch?v=" + self.video_id
+        user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36"
 
         dict_str = ""
         next_url = ""
         session = requests.Session()
-        headers = {
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'}
+        headers = {'user-agent': user_agent}
 
         html = requests.get(url)
         soup = BeautifulSoup(html.content, "html.parser")
@@ -146,33 +138,24 @@ class Chat(Data):
                 next_url = frame["src"]
                 break
 
-        while (1):
+        while True:
             try:
                 xml = session.get(next_url, headers=headers)
                 soup = BeautifulSoup(xml.text, 'lxml')
 
                 # next_url의 데이터가 있는 부분을 find_all에서 찾고 split로 쪼갠다
                 for scrp in soup.find_all("script"):
-                    txt = scrp.text
-                    if 'responseContext' in txt:
+                    if 'responseContext' in scrp.text:
                         dict_str = scrp.text.split("] = ")[1]
                         break
 
                 # javascript 표기이므로 변형
-                dict_str = dict_str.replace('false', 'False')
-                dict_str = dict_str.replace('true', 'True')
-                # dict_str = dict_str.replace("'", '-')
-
-                # 불필요한 공백 등 제거
-                dict_str = dict_str.rstrip(' \n;()')
+                dict_str = dict_str.replace('false', 'False').replace('true', 'True').rstrip(' \n;()')
 
                 # 사전 형식으로 변환
                 dics = literal_eval(dict_str)
 
-                continue_url = \
-                    dics["continuationContents"]["liveChatContinuation"]["continuations"][0][
-                        "liveChatReplayContinuationData"][
-                        "continuation"]
+                continue_url = dics["continuationContents"]["liveChatContinuation"]["continuations"][0]["liveChatReplayContinuationData"]["continuation"]
                 next_url = "https://www.youtube.com/live_chat_replay?continuation=" + continue_url
 
                 # 코멘트 데이터의 목록. 선두는 노이즈 데이터이므로 [1 :]에서 저장
@@ -181,41 +164,22 @@ class Chat(Data):
                 for samp in enumerate(dics2):
                     samp = samp[1]
                     chat = ""
-                    chat_id = ""
                     de_chat = samp["replayChatItemAction"]["actions"][0]
                     de_time = int(int(samp["replayChatItemAction"]["videoOffsetTimeMsec"]) / 1000)
-                    de_str = str(de_chat)
 
-                    if "liveChatPlaceholderItemRenderer" in de_str:
-                        continue
-                    elif "addLiveChatTickerItemAction" in de_str:
-                        continue
-                    elif "liveChatPaidStickerRenderer" in de_str:
-                        continue
-                    elif "liveChatPaidMessageRenderer" in de_str:
+                    if "liveChatPlaceholderItemRenderer" or "addLiveChatTickerItemAction" or "liveChatPaidStickerRenderer" or "liveChatPaidMessageRenderer" or "liveChatMembershipItemRenderer" in str(de_chat):
                         continue
 
-                    else:
-                        if "liveChatMembershipItemRenderer" in de_str:
-                            continue
+                    chat_log = de_chat["addChatItemAction"]["item"]["liveChatTextMessageRenderer"]["message"]["runs"]
+                    for i in range(len(chat_log)):
+                        if "emoji" in chat_log[i]:
+                            chat = chat
                         else:
-                            chat_log = de_chat["addChatItemAction"]["item"]["liveChatTextMessageRenderer"]["message"][
-                                "runs"]
-                            for i in range(len(chat_log)):
-                                sample = chat_log[i]
-                                if "emoji" in sample:
-                                    chat = chat
-                                else:
-                                    chat += chat_log[i]["text"]
-                            chat_id = de_chat["addChatItemAction"]["item"]["liveChatTextMessageRenderer"]["authorName"][
-                                "simpleText"]
+                            chat += chat_log[i]["text"]
+                    chat_id = de_chat["addChatItemAction"]["item"]["liveChatTextMessageRenderer"]["authorName"]["simpleText"]
 
-                    # 리스트에 추출 항목들 저장 (0초 채팅기록은 저장하지 않음)
-                    if de_time > 0:
-                        if len(chat) != 0:
-                            # 리스트에 추출 항목들 저장
-                            el = [de_time, str(chat_id), str(chat)]
-                            self.chatlog.append(el)
+                    if de_time > 0 and len(chat) != 0:
+                        self.chatlog.append([de_time, str(chat_id), str(chat).replace('\n', '')])
 
             # next_url를 사용할 수 없게되면 while문 종료
             except:
@@ -233,7 +197,7 @@ class Chat(Data):
                 f.write(str(self.chatlog[x][1]))
                 f.write(')')
                 f.write('\t')
-                f.write(str(self.chatlog[x][2].replace('\n', '')))
+                f.write(str(self.chatlog[x][2]))
                 f.write("\n")
         f.close()
 
