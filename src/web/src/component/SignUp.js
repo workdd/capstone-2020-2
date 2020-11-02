@@ -71,7 +71,7 @@ const SignUp = () => {
         frd.append("name", name);
         frd.append("age", age);
         axios
-          .post("http://13.209.112.92:8000/api/signup", frd, {
+          .post("http://localhost:8000/api/signup", frd, {
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
           })
           .then((response) => {

@@ -52,7 +52,7 @@ const Highlight = (props) => {
     try {
       let temp = [];
       axios
-        .get("http://13.209.112.92:8000/api/SNDhighlight", {
+        .get("http://localhost:8000/api/SNDhighlight", {
           headers: { "Content-Type": "multipart/form-data" },
           params: {
             url: props.url,
@@ -65,7 +65,7 @@ const Highlight = (props) => {
             temp = temp.concat([[humanReadable(data[i][0]), "sound"]]);
           }
           axios
-            .get("http://13.209.112.92:8000/api/chatlog_highlight", {
+            .get("http://localhost:8000/api/chatlog_highlight", {
               headers: { "Content-Type": "multipart/form-data" },
               params: {
                 url: props.url,

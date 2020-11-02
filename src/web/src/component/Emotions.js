@@ -339,7 +339,7 @@ const Emotions = (props) => {
     useEffect(() => {
         try {
             axios
-                .get("http://13.209.112.92:8000/api/predict7", {
+                .get("http://localhost:8000/api/predict7", {
                     headers: {"Content-Type": "multipart/form-data"},
                     params: {
                         url: props.url,
@@ -347,15 +347,15 @@ const Emotions = (props) => {
                 })
                 .then((response) => {
                     const data = response.data;
-                    // console.log(data.predict.pos);
+                    // console.log(data.predict);
                     let datasets = state.dataLine.datasets;
 
                     for (var i = 0; i < 100; i++) {
                         state.dataLine.labels = state.dataLine.labels.concat(i);
 
                         for (let emo = 0; emo < datasets.length; emo++) {
-                            state.dataLine.datasets[emo].data = datasets[emo].data.concat(
-                                data.predict[datasets[emo].label][emo]
+                            state.dataLine.datasets[emo].data = state.dataLine.datasets[emo].data.concat(
+                                data.predict[datasets[0].label][i]
                             );
                         }
                     }
