@@ -2,12 +2,15 @@ import { AppBar, Grid, Typography } from "@material-ui/core";
 import React from "react";
 import YobaLogo from "../yoba_logo.png";
 import Login from "./Login.js"
+import cookie from 'react-cookies'
 
 const NaviBar = (props) => {
   // console.log(props.email)
   const logout = () => {
-    if (props.login === true) {
-      localStorage.removeItem("loginStorage");
+      cookie.remove('data')
+      if (props.login === true) {
+      // localStorage.removeItem("loginStorage");
+
       props.toggleLogin(false);
       props.toggleInput(false);
       alert("sign out");

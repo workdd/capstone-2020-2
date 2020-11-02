@@ -46,6 +46,8 @@ const MainPage = () => {
                     // console.log(data);
                     // localStorage.setItem("loginStorage", JSON.stringify(data));
                     cookie.save('data', JSON.stringify(data), {path: '/'});
+                    console.log(temp);
+
                     setEmail(JSON.parse(temp).email);
                     setName(JSON.parse(temp).name);
                     toggleLogin(true);

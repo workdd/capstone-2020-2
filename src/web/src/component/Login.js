@@ -56,6 +56,8 @@ const Login = (props) => {
           // console.log(data);
           // localStorage.setItem("loginStorage", JSON.stringify(data));
           cookie.save('data',JSON.stringify(data),{path:'/'});
+
+          console.log(cookie.load('data'))
           props.setEmail(email);
           props.setName(data.name);
           props.toggleLogin(true);

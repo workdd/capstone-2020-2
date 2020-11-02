@@ -74,7 +74,8 @@ const InputUrl = (props) => {
         })
         .catch(function (error) {
           if (error.response.status === 401) {
-            localStorage.removeItem("loginStorage");
+            // localStorage.removeItem("loginStorage");
+            cookie.remove('data');
             props.toggleLogin(false);
             props.toggleInput(false);
             alert("please, you need sign in again.");
