@@ -18,8 +18,8 @@ class Chat(Data):
         self.data = []
         self.chatlog = []
         self.unit_of_time = 30
-        self.point = None
-        self.section = None
+        self.point = []
+        self.section = []
 
     def download(self):
         if not os.path.exists(f"./chatlog/{self.platform}"):
@@ -221,9 +221,7 @@ class Chat(Data):
         freq = {}
         time = {}
         for i in range(len(self.chatlog)):
-            nouns = okt.nouns(self.chatlog[i][2])
-            nouns = set(nouns)
-            for key in nouns:
+            for key in set(okt.nouns(self.chatlog[i][2])):
                 if len(key) < 2:
                     continue
                 elif key in freq.keys():
@@ -258,21 +256,17 @@ class Chat(Data):
 
                 if key in section_dic.keys():  # 구간 추출 성공
                     break
-                else:  # 구간 추출 실패
-                    if n < 20.0:
-                        n += 1.0
-                        m -= 0.5
-                    else:
-                        section_dic[key] = self.analyze_keyword(key)
-                        break
+                elif n < 20.0:
+                    n += 1.0
+                    m -= 0.5
+                else:
+                    section_dic[key] = self.analyze_keyword(key)
+                    break
 
-        self.section = []
         i = 0
         for key in section_dic.keys():
             if i == 10:
                 break
-            else:
-                self.section.append([key, str(freq[key]), section_dic[key]])
-                i += 1
-
+            self.section.append([key, str(freq[key]), section_dic[key]])
+            i += 1
         self.print_section_hhmmss()
