@@ -10,7 +10,7 @@ class Audio(Data):
         self.platform = platform
         self.video_id = video_id
         self.url = url
-        self.data = None
+        self.data = []
         self.unit_of_time = 30
 
     def download(self):
@@ -29,7 +29,6 @@ class Audio(Data):
                 files.append(i)
 
         arr = []
-
         if filetype == "video":
             for filename in files:
                 arr.append(VideoFileClip(f"video/{self.platform}/{filename}"))
@@ -47,7 +46,7 @@ class Audio(Data):
         audio = self.load_audio(filetype)
 
         sr = audio.fps  # 샘플링 레이트
-        cut = lambda x: audio.subclip(x, x + 1).to_soundarray(fps=sr)  # 1초에 해당하는 데이터를 뽑는 람다함수
+        cut = lambda x: audio.subclip(x, x + 1).to_soundarray(fps=audio.fps)  # 1초에 해당하는 데이터를 뽑는 람다함수
         volume = lambda array: np.sqrt(((1.0 * array) ** 2).mean())  # 음압 -> 음량 변환하는 람다함수
 
         volumes = []
@@ -59,10 +58,8 @@ class Audio(Data):
 
         self.data = []
         for i in range(0, len(volumes), self.unit_of_time):  # time_range 초 단위로 쪼개서 단위 시간 내 가장 큰 값 추출
-            if len(volumes) - i < self.unit_of_time:
-                self.data.append(max(volumes[i:len(volumes)]))
-            else:
-                self.data.append(max(volumes[i:i + self.unit_of_time]))
+            end_slicing_index = len(volumes) if len(volumes) - i < self.unit_of_time else i + self.unit_of_time
+            self.data.append(max(volumes[i:end_slicing_index]))
 
         audio.close()
 
