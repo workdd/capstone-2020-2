@@ -21,7 +21,6 @@ def post_signup(data, db):
     password_hash = bcrypt.hashpw(data['pw'].encode(), SALT)
     user_info = db.query(UserInfo).filter(
         UserInfo.email == data['email'],
-        UserInfo.pw == password_hash.decode(),
     ).first()
     if user_info:  # 이미 존재하는 계정
         raise Conflict

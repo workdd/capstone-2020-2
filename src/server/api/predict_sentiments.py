@@ -52,11 +52,7 @@ def get_predict(data, db):
         raise BadRequest
 
     endSecond = int(second[-1][1:-1])
-
-    if endSecond >= 100.0:
-        inc = math.floor(endSecond / 100.0)
-    else:
-        inc = 1.0
+    inc = math.floor(endSecond / 100.0) if endSecond >= 100.0 else 1.0
 
     predict_per_unitsecond = {
         'pos': [],
