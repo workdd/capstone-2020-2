@@ -8,8 +8,7 @@ from werkzeug.exceptions import BadRequest, NotAcceptable, Conflict
 from models.file import File
 from settings.settings import MODE
 from settings.utils import api
-from download.audio import *
-from analyze.volume_extract import *
+from analyze.audio import *
 from api.ana_url import split_url
 import boto3
 
@@ -29,7 +28,7 @@ def upload_image(data, db, platform, videoid):
     file = open(data['name'], 'rb')
     img = file.read()
     file.close()
-    image_path = f'./audio/normalizeAudio/{platform}_{videoid}.png'
+    image_path = f'./audio/normalizeAudio/{platform}/{videoid}.png'
     file_name = image_path.split('/')[-1]
     if MODE == 'RUN':  # use EC2 only
         s3.meta.client.upload_file(
@@ -71,11 +70,11 @@ def get_sound_normalize(data, db):
     url_result = split_url(url)
 
     if url_result != False:
-        download(url_result[0], url_result[1], url)
-
-        volumesPerMinute = sound_extract(url_result[0], url_result[1])
-        save_graph(url_result[0], url_result[1], volumesPerMinute)
-        image = {'url': url, 'name': f"./audio/normalizeAudio/{url_result[0]}_{url_result[1]}.png"}
+        audio = Audio(url_result[0], url_result[1], url)
+        audio.download()
+        audio.sound_extract()
+        audio.save_graph()
+        image = {'url': url, 'name': f"./audio/normalizeAudio/{url_result[0]}/{url_result[1]}.png"}
 
         image_path = upload_image(image, db, url_result[0], url_result[1])
         return jsonify({'image_url': image_path})

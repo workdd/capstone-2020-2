@@ -7,8 +7,7 @@ from werkzeug.exceptions import BadRequest
 
 from models.chat import Keyword
 from settings.utils import api
-from download.chatlog import *
-from analyze.analysis import *
+from analyze.chat import *
 
 
 app = Blueprint('chatlog', __name__, url_prefix='/api')
@@ -31,11 +30,11 @@ def get_chatlog(data, db):
     if query:
         return jsonify(query.keyword_json)
 
-    log = download(platform, videoid)
+    chat = Chat(platform, videoid)
+    chat.download()
+    chat.find_high_frequency_words()
 
-    keyword = find_high_frequency_words(log)
-
-    result = {'keyword': keyword}
+    result = {'keyword': chat.section}
 
     keyword = Keyword(
         platform=platform,

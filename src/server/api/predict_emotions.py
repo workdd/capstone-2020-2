@@ -1,7 +1,6 @@
 import numpy
 from models.highlight import Predict7
-import math
-from download.chatlog import download
+from analyze.chat import *
 from api.ana_url import split_url
 from werkzeug.exceptions import BadRequest
 from sentiment7.sentiment7 import predict_7sentiment
@@ -30,9 +29,10 @@ def get_predict7(data, db):
     if query:
         return query.sentiment7_json
 
-    download(isURLValid[0], isURLValid[1])
+    chat = Chat(isURLValid[0], isURLValid[1])
+    chat.download()
 
-    with open('./chatlog/{}_{}.txt'.format(isURLValid[0], isURLValid[1]), encoding='utf-8') as f:
+    with open('./chatlog/{}/{}.txt'.format(isURLValid[0], isURLValid[1]), encoding='utf-8') as f:
         content = f.read().split('\n')
 
     second = []
