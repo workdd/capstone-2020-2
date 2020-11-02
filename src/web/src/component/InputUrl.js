@@ -3,6 +3,7 @@ import Button from "@material-ui/core/Button";
 import axios from "axios";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
+import { YobaConsumer } from "../context/YobaContext";
 
 const InputUrl = (props) => {
   const [url, setUrl] = useState();
@@ -21,7 +22,7 @@ const InputUrl = (props) => {
         .then((response) => {
           const data = response.data;
           // console.log(data);
-          if(data.result === false) {
+          if (data.result === false) {
             alert("wrong url. please, check url.");
           } else {
             props.setPlatform(data.result[0]);
@@ -35,7 +36,6 @@ const InputUrl = (props) => {
             alert("wrong url. please, check url.");
           }
           // console.log(error);
-          
         });
     } catch (e) {
       console.log(e);
@@ -90,22 +90,27 @@ const InputUrl = (props) => {
         justify="center"
         style={{ paddingTop: 40, paddingBottom: 10 }}
       >
-        <Grid xs={2} style={{marginRight: 20}}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            name="url"
-            label="url"
-            type="url"
-            id="url"
-            fullWidth
-            onChange={(e) => {
-              setUrl(e.target.value);
-            }}
-          />
+        <Grid xs={2} style={{ marginRight: 20 }}>
+          <YobaConsumer>
+            {({ actions }) => (
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                name="url"
+                label="url"
+                type="url"
+                id="url"
+                fullWidth
+                onChange={(e) => {
+                  setUrl(e.target.value);
+                  actions.setUrl(e.target.value);
+                }}
+              />
+            )}
+          </YobaConsumer>
         </Grid>
-        
+
         <Grid>
           <Button variant="contained" color="secondary" onClick={onClick}>
             Input URL
