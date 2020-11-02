@@ -48,10 +48,8 @@ class Chat(Data):
             count[self.chatlog[i][0]] += 1
 
         for i in range(0, len(count), self.unit_of_time):  # time_range 초 단위로 쪼개서 단위 시간 내 가장 큰 값 추출
-            if len(count) - i < self.unit_of_time:
-                self.data.append(max(count[i:len(count)]))
-            else:
-                self.data.append(max(count[i:i + self.unit_of_time]))
+            end_slicing_index = len(count) if len(count) - i < self.unit_of_time else i + self.unit_of_time
+            self.data.append(max(count[i:end_slicing_index]))
         return self.chatlog
 
 
@@ -172,10 +170,7 @@ class Chat(Data):
 
                     chat_log = de_chat["addChatItemAction"]["item"]["liveChatTextMessageRenderer"]["message"]["runs"]
                     for i in range(len(chat_log)):
-                        if "emoji" in chat_log[i]:
-                            chat = chat
-                        else:
-                            chat += chat_log[i]["text"]
+                        chat = chat + chat_log[i]["text"] if "emoji" not in chat_log[i] else chat
                     chat_id = de_chat["addChatItemAction"]["item"]["liveChatTextMessageRenderer"]["authorName"]["simpleText"]
 
                     if de_time > 0 and len(chat) != 0:
