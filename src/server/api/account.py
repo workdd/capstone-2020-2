@@ -13,15 +13,12 @@ app = Blueprint('account', __name__, url_prefix='/api')
 @app.route('/signup', methods=['POST'])
 @api
 def post_signup(data, db):
-    req_list = ['email', 'pw', 'name', 'age']
-    for i in req_list:  # 필수 요소 들어있는지 검사
+    for i in ['email', 'pw', 'name', 'age']:  # 필수 요소 들어있는지 검사
         if i not in data:
             raise BadRequest
 
     password_hash = bcrypt.hashpw(data['pw'].encode(), SALT)
-    user_info = db.query(UserInfo).filter(
-        UserInfo.email == data['email'],
-    ).first()
+    user_info = db.query(UserInfo).filter(UserInfo.email == data['email'],).first()
     if user_info:  # 이미 존재하는 계정
         raise Conflict
 
