@@ -1,10 +1,11 @@
 import { AppBar, Grid, Typography } from "@material-ui/core";
-import React from "react";
+import React, { useContext } from "react";
 import YobaLogo from "../yoba_logo.png";
 import Login from "./Login.js"
+import YobaContext from "../context/YobaContext"
 
 const NaviBar = (props) => {
-  // console.log(props.email)
+  const { states } = useContext(YobaContext);
   const logout = () => {
     if (props.login === true) {
       localStorage.removeItem("loginStorage");
@@ -60,7 +61,7 @@ const NaviBar = (props) => {
             }}
             onClick={onClick}
           >
-            {props.login ? "Welcome! " + props.name : ""}
+            {props.login ? "Welcome! " + states.name : ""}
           </Typography>
         </Grid>
         <Grid xs={1}>
@@ -78,7 +79,7 @@ const NaviBar = (props) => {
               Sign out
             </Typography>
           ) : (
-            <Login setEmail = {props.setEmail} toggleLogin = {props.toggleLogin} setName = {props.setName}></Login>
+            <Login toggleLogin = {props.toggleLogin}></Login>
           )}
         </Grid>
       </Grid>
