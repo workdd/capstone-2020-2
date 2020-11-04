@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import { Grid } from "@material-ui/core";
 import ViewerReact from "./ViewerReact";
 import Highlight from "./Highlight";
 import ViewerRank from "./ViewerRank";
-import Seven from "./Seven";
+import Emotions from "./Emotions";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Radio from "@material-ui/core/Radio";
@@ -14,6 +14,7 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import ReactPlayer from "react-player";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import YobaContext from "../context/YobaContext";
 
 const useStyles = makeStyles({
   root: {
@@ -80,7 +81,7 @@ const Result = (props) => {
   const [keyword, setKeyword] = useState(false);
   const [high, setHigh] = useState(false);
   const [audioNorm, setAudioNrom] = useState(false);
-  const [seven, setSeven] = useState(false);
+  const [emotions, setEmotions] = useState(false);
   const [image, setImage] = useState();
   const [check, setCheck] = useState(false);
   const [time, setTime] = useState(0);
@@ -88,10 +89,12 @@ const Result = (props) => {
 
   const player_ref = useRef();
 
+  const { states } = useContext(YobaContext);
+
   useEffect(() => {
     setPosAndNeg(false);
     setKeyword(false);
-    if (props.url === undefined) {
+    if (states.url === undefined) {
       setHigh(false);
     } else {
       setHigh(true);
@@ -101,10 +104,10 @@ const Result = (props) => {
   const audio = () => {
     try {
       axios
-        .get("http://13.209.112.92:8000/api/SNDnormalize", {
+        .get("http://localhost:8000/api/SNDnormalize", {
           headers: { "Content-Type": "multipart/form-data" },
           params: {
-            url: props.url,
+            url: states.url,
           },
         })
         .then((response) => {
@@ -124,38 +127,47 @@ const Result = (props) => {
   const dashboad = (e) => {
     // console.log(e.target.value);
     // console.log(props);
-    if (e.target.value === "posAndNeg") {
-      setPosAndNeg(true);
-      setKeyword(false);
-      setAudioNrom(false);
-      setSeven(false);
-    } else if (e.target.value === "keword") {
-      setPosAndNeg(false);
-      setKeyword(true);
-      setAudioNrom(false);
-      setSeven(false);
-    } else if (e.target.value === "audioNorm") {
-      setPosAndNeg(false);
-      setKeyword(false);
-      setAudioNrom(true);
-      setSeven(false);
-      audio();
-    } else if (e.target.value === "seven") {
-      setPosAndNeg(false);
-      setKeyword(false);
-      setAudioNrom(false);
-      setSeven(true);
-    } else {
-      setPosAndNeg(false);
-      setKeyword(false);
-      setAudioNrom(false);
-      setSeven(false);
+
+    let setter = [
+      {
+        key: "posAndNeg",
+        set: [true, false, false, false],
+      },
+      {
+        key: "keword",
+        set: [false, true, false, false],
+      },
+      {
+        key: "audioNorm",
+        set: [false, false, true, false],
+      },
+      {
+        key: "emotions",
+        set: [false, false, false, true],
+      },
+      {
+        key: "false",
+        set: [false, false, false, false],
+      },
+    ];
+
+    for (let idx = 0; idx < setter.length; idx++) {
+      if (e.target.value === setter[idx].key) {
+        setPosAndNeg(setter[idx].set[0]);
+        setKeyword(setter[idx].set[1]);
+        setAudioNrom(setter[idx].set[2]);
+        setEmotions(setter[idx].set[3]);
+        if (setter[idx].key === "audioNorm") {
+          audio();
+        }
+      }
     }
   };
   const moveControl = () => {
     player_ref.current.seekTo(time);
     setCheck(false);
   };
+
   return (
     <div>
       {props.platform !== "AfreecaTV" ? (
@@ -166,7 +178,6 @@ const Result = (props) => {
         <></>
       )}
       <h3 className="mt-5">Video</h3>
-
       <Grid
         container
         alignItems="center"
@@ -178,12 +189,12 @@ const Result = (props) => {
           <ReactPlayer
             ref={player_ref}
             playing
-            url={props.url}
+            url={states.url}
             controls
           ></ReactPlayer>
         ) : (
           <iframe
-            src={props.url}
+            src={states.url}
             width="640"
             height="360"
             currentPosition="100"
@@ -192,7 +203,6 @@ const Result = (props) => {
         <Grid xs={1}></Grid>
         {check ? moveControl() : <></>}
       </Grid>
-
       <br></br>
       <Grid
         container
@@ -206,7 +216,6 @@ const Result = (props) => {
             <Highlight
               platform={props.platform}
               videoid={props.videoid}
-              url={props.url}
               setTime={setTime}
               setCheck={setCheck}
             ></Highlight>
@@ -217,7 +226,7 @@ const Result = (props) => {
         <Grid xs={3}></Grid>
       </Grid>
       <br></br>
-      <h3>Analysis results of {props.url}</h3>
+      <h3>Analysis results of {states.url}</h3>
       <FormControl component="fieldset">
         <FormLabel component="legend">Options</FormLabel>
         <RadioGroup
@@ -231,9 +240,9 @@ const Result = (props) => {
             label="Positive & Negative"
           />
           <FormControlLabel
-            value="seven"
+            value="emotions"
             control={<StyledRadio />}
-            label="Seven Sentiment"
+            label="Emotions Sentiment"
           />
           <FormControlLabel
             value="keword"
@@ -252,7 +261,6 @@ const Result = (props) => {
           /> */}
         </RadioGroup>
       </FormControl>
-
       <Grid
         container
         alignItems="center"
@@ -262,7 +270,7 @@ const Result = (props) => {
         <Grid xs={3}></Grid>
         {posAndNeg ? (
           <Grid xs={6}>
-            <ViewerReact url={props.url}></ViewerReact>
+            <ViewerReact></ViewerReact>
           </Grid>
         ) : (
           <></>
@@ -293,9 +301,9 @@ const Result = (props) => {
         ) : (
           <></>
         )}
-        {seven ? (
+        {emotions ? (
           <Grid xs={6}>
-            <Seven url={props.url}></Seven>
+            <Emotions></Emotions>
           </Grid>
         ) : (
           <></>

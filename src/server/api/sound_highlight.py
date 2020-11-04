@@ -8,9 +8,7 @@ from werkzeug.exceptions import BadRequest, NotAcceptable, Conflict, NotFound
 from models.highlight import SoundHighlight
 
 from settings.utils import api
-from download.audio import *
-from analyze.volume_extract import *
-from analyze.analysis import *
+from analyze.audio import *
 from api.ana_url import split_url
 
 app = Blueprint('SNDhighlight', __name__, url_prefix='/api')
@@ -51,12 +49,12 @@ def get_sound_highlight(data, db):
     url_result = split_url(url)
 
     if url_result != False:
-        download(url_result[0], url_result[1], url)
+        audio = Audio(url_result[0], url_result[1], url)
+        audio.download()
+        audio.sound_extract()
+        audio.analyze_highlight()
 
-        volumesPerMinute = sound_extract(url_result[0], url_result[1])
-        point = analyze1_sound(volumesPerMinute)
-
-        result = {"highlight": point}
+        result = {"highlight": audio.point}
         new_sound_highlight = SoundHighlight(
             url=url,
             highlight_json=result

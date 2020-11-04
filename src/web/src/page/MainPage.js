@@ -4,7 +4,6 @@ import axios from "axios";
 import Navibar from "../component/Navibar";
 import Description from "../component/Description";
 import InputUrl from "../component/InputUrl";
-import Login from "../component/Login";
 import Result from "../component/Result";
 import Usage from "../component/Usage";
 
@@ -27,7 +26,6 @@ const MainPage = () => {
   const [input, toggleInput] = useState(false);
   const [platform, setPlatform] = useState();
   const [videoid, setVideoid] = useState();
-  const [url, setUrl] = useState();
   const [name, setName] = useState();
 
   const temp = localStorage.getItem("loginStorage");
@@ -35,7 +33,7 @@ const MainPage = () => {
   const test = () => {
     try {
       axios
-        .get("http://13.209.112.92:8000/api/login", {
+        .get("http://localhost:8000/api/login", {
           headers: { "Content-Type": "multipart/form-data" },
           params: {
             email: JSON.parse(temp).email,
@@ -82,7 +80,6 @@ const MainPage = () => {
       {login ? (
         <InputUrl
           toggleInput={toggleInput}
-          setUrl={setUrl}
           toggleLogin={toggleLogin}
           setPlatform={setPlatform}
           setVideoid={setVideoid}
@@ -93,7 +90,7 @@ const MainPage = () => {
       )}
 
       {input & login ? (
-        <Result url={url} platform={platform} videoid={videoid}></Result>
+        <Result platform={platform} videoid={videoid}></Result>
       ) : (
         <></>
       )}

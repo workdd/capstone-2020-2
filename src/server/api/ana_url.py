@@ -1,6 +1,6 @@
 import urllib.request
 import re
-from api import Non_url
+from api.Non_url import *
 from flask import Blueprint, jsonify
 from werkzeug.exceptions import BadRequest
 from settings.utils import api
@@ -23,7 +23,7 @@ def split_url(url):
             # videoID길이가 8이 아니면 invalid
             if len(videoID) == 8:
                 # 오류시 길이 2, 오류 안나면 2초과
-                result = Non_url.non_url_afreeca(videoID)
+                result = non_url_afreeca(videoID)
                 return result
             else:
                 return False
@@ -39,7 +39,7 @@ def split_url(url):
                 # videoID길이가 9가 아니면 invalid
                 if len(videoID) == 9:
                     # 없는 영상이면 http 에러코드, 아니면 recorded
-                    result = Non_url.non_url_twitch(videoID)
+                    result = non_url_twitch(videoID)
                     return result
                 else:
                     return False
@@ -56,7 +56,7 @@ def split_url(url):
             # videoID길이가 11이 아니면 invalid
             if len(videoID) == 11:
                 # 오류나면 Error, 아니면 OK
-                result = Non_url.non_url_youtube(videoID)
+                result = non_url_youtube(videoID)
                 return result
             else:
                 return False
