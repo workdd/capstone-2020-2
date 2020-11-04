@@ -13,35 +13,33 @@ from analyze.chat import *
 app = Blueprint('chatlog', __name__, url_prefix='/api')
 
 
+def get_info_with_error_check(data):
+    for i in ['platform', 'videoid']:  # 필수 요소 들어있는지 검사
+        if i not in data:
+            raise BadRequest
+    return data['platform'], data['videoid']
+
+
 @app.route('/chatlog', methods=['GET'])
 @api
 def get_chatlog(data, db):
-    req_list = ['platform', 'videoid']
-    for i in req_list:  # 필수 요소 들어있는지 검사
-        if i not in data:
-            raise BadRequest
-    platform = data['platform']
-    videoid = data['videoid']
+    platform, videoid = get_info_with_error_check(data)
 
     query = db.query(Keyword).filter(
         Keyword.platform == platform,
-        Keyword.videoid == videoid,
-    ).first()
+        Keyword.videoid == videoid,).first()
     if query:
         return jsonify(query.keyword_json)
-
     chat = Chat(platform, videoid)
     chat.download()
     chat.find_high_frequency_words()
 
     result = {'keyword': chat.section}
-
     keyword = Keyword(
         platform=platform,
         videoid=videoid,
-        keyword_json=result
-    )
+        keyword_json=result)
+
     db.add(keyword)
     db.commit()
-
     return jsonify(result)
