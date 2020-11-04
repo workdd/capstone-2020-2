@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -9,6 +9,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import YobaContext from "../context/YobaContext"
 
 const useStyles = makeStyles({
   table: {
@@ -47,6 +48,7 @@ const Highlight = (props) => {
   const classes = useStyles();
   const [rows, setRows] = useState([]);
   const [load, setLoad] = useState(false);
+  const { states } = useContext(YobaContext);
 
   useEffect(() => {
     try {
@@ -55,7 +57,7 @@ const Highlight = (props) => {
         .get("http://localhost:8000/api/SNDhighlight", {
           headers: { "Content-Type": "multipart/form-data" },
           params: {
-            url: props.url,
+            url: states.url,
           },
         })
         .then((response) => {
@@ -68,7 +70,7 @@ const Highlight = (props) => {
             .get("http://localhost:8000/api/chatlog_highlight", {
               headers: { "Content-Type": "multipart/form-data" },
               params: {
-                url: props.url,
+                url: states.url,
               },
             })
             .then((response) => {
@@ -95,7 +97,7 @@ const Highlight = (props) => {
     } catch (e) {
       console.log(e);
     }
-  }, [props]);
+  }, [states]);
 
   const onClick = (e) => {
     // console.log(e.point);
