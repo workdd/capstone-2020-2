@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -10,6 +10,7 @@ import SignUp from "./SignUp";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import YobaContext from "../context/YobaContext"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -31,8 +32,9 @@ const Login = (props) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const classes = useStyles();
-
+  
   const [open, setOpen] = useState(false);
+  const { actions } = useContext(YobaContext);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -54,8 +56,8 @@ const Login = (props) => {
           const data = response.data;
           // console.log(data);
           localStorage.setItem("loginStorage", JSON.stringify(data));
-          props.setEmail(email);
-          props.setName(data.name);
+          actions.setEmail(email);
+          actions.setName(data.name);
           props.toggleLogin(true);
           return true;
         })
