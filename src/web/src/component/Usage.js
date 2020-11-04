@@ -1,7 +1,6 @@
-import {Grid, Typography} from "@material-ui/core";
+import {Grid} from "@material-ui/core";
 import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
-import ViewerReact from "./ViewerReact";
 
 const login = require("../flaticon/login.png");
 const url = require("../flaticon/url.png");
