@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
-import { YobaConsumer } from "../context/YobaContext";
+import YobaContext from "../context/YobaContext";
 
 const InputUrl = (props) => {
-  const [url, setUrl] = useState();
+  const { actions, states } = useContext(YobaContext);
 
   const temp = localStorage.getItem("loginStorage");
 
@@ -16,7 +16,7 @@ const InputUrl = (props) => {
         .get("http://localhost:8000/api/analysis_url", {
           headers: { "Content-Type": "multipart/form-data" },
           params: {
-            url: url,
+            url: states.url,
           },
         })
         .then((response) => {
@@ -27,7 +27,6 @@ const InputUrl = (props) => {
           } else {
             props.setPlatform(data.result[0]);
             props.setVideoid(data.result[1]);
-            props.setUrl(url);
             props.toggleInput(true);
           }
         })
@@ -54,14 +53,11 @@ const InputUrl = (props) => {
         })
         .then((response) => {
           const data = response.data;
-          // console.log(data);
           localStorage.setItem("loginStorage", JSON.stringify(data));
-          // props.toggleInput(true);
-          // props.setUrl(url);
           if (props.input === true) {
             props.setPlatform();
             props.setVideoid();
-            props.setUrl();
+            actions.setUrl();
             props.toggleInput(false);
             alert("reset");
           } else {
@@ -91,24 +87,19 @@ const InputUrl = (props) => {
         style={{ paddingTop: 40, paddingBottom: 10 }}
       >
         <Grid xs={2} style={{ marginRight: 20 }}>
-          <YobaConsumer>
-            {({ actions }) => (
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                name="url"
-                label="url"
-                type="url"
-                id="url"
-                fullWidth
-                onChange={(e) => {
-                  setUrl(e.target.value);
-                  actions.setUrl(e.target.value);
-                }}
-              />
-            )}
-          </YobaConsumer>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            name="url"
+            label="url"
+            type="url"
+            id="url"
+            fullWidth
+            onChange={(e) => {
+              actions.setUrl(e.target.value);
+            }}
+          />
         </Grid>
 
         <Grid>

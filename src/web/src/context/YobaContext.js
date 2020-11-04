@@ -8,10 +8,10 @@ const YobaContext = createContext({
 })
 
 const YobaProvidor = ({children}) => {
-    const [url, setUrl] = useState('');
+    const [url, setUrl] = useState();
 
     const value = {
-        state: {url,},
+        states: {url,},
         actions: {setUrl,}
     };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import { Grid } from "@material-ui/core";
 import ViewerReact from "./ViewerReact";
@@ -14,7 +14,7 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import ReactPlayer from "react-player";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { YobaConsumer } from "../context/YobaContext";
+import YobaContext from "../context/YobaContext";
 
 const useStyles = makeStyles({
   root: {
@@ -89,10 +89,12 @@ const Result = (props) => {
 
   const player_ref = useRef();
 
+  const { states } = useContext(YobaContext);
+
   useEffect(() => {
     setPosAndNeg(false);
     setKeyword(false);
-    if (props.url === undefined) {
+    if (states.url === undefined) {
       setHigh(false);
     } else {
       setHigh(true);
@@ -105,7 +107,7 @@ const Result = (props) => {
         .get("http://localhost:8000/api/SNDnormalize", {
           headers: { "Content-Type": "multipart/form-data" },
           params: {
-            url: props.url,
+            url: states.url,
           },
         })
         .then((response) => {
@@ -165,6 +167,7 @@ const Result = (props) => {
     player_ref.current.seekTo(time);
     setCheck(false);
   };
+
   return (
     <div>
       {props.platform !== "AfreecaTV" ? (
@@ -175,7 +178,6 @@ const Result = (props) => {
         <></>
       )}
       <h3 className="mt-5">Video</h3>
-
       <Grid
         container
         alignItems="center"
@@ -187,12 +189,12 @@ const Result = (props) => {
           <ReactPlayer
             ref={player_ref}
             playing
-            url={props.url}
+            url={states.url}
             controls
           ></ReactPlayer>
         ) : (
           <iframe
-            src={props.url}
+            src={states.url}
             width="640"
             height="360"
             currentPosition="100"
@@ -201,7 +203,6 @@ const Result = (props) => {
         <Grid xs={1}></Grid>
         {check ? moveControl() : <></>}
       </Grid>
-
       <br></br>
       <Grid
         container
@@ -215,7 +216,6 @@ const Result = (props) => {
             <Highlight
               platform={props.platform}
               videoid={props.videoid}
-              url={props.url}
               setTime={setTime}
               setCheck={setCheck}
             ></Highlight>
@@ -226,9 +226,7 @@ const Result = (props) => {
         <Grid xs={3}></Grid>
       </Grid>
       <br></br>
-      <YobaConsumer>
-        {({ state }) => <h3>Analysis results of {state.url}</h3>}
-      </YobaConsumer>
+      <h3>Analysis results of {states.url}</h3>
       <FormControl component="fieldset">
         <FormLabel component="legend">Options</FormLabel>
         <RadioGroup
@@ -263,7 +261,6 @@ const Result = (props) => {
           /> */}
         </RadioGroup>
       </FormControl>
-
       <Grid
         container
         alignItems="center"
@@ -273,7 +270,7 @@ const Result = (props) => {
         <Grid xs={3}></Grid>
         {posAndNeg ? (
           <Grid xs={6}>
-            <ViewerReact url={props.url}></ViewerReact>
+            <ViewerReact></ViewerReact>
           </Grid>
         ) : (
           <></>
@@ -306,7 +303,7 @@ const Result = (props) => {
         )}
         {emotions ? (
           <Grid xs={6}>
-            <Emotions url={props.url}></Emotions>
+            <Emotions></Emotions>
           </Grid>
         ) : (
           <></>

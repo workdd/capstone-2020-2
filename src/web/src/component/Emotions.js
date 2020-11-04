@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import axios from "axios";
 import {Line} from "react-chartjs-2";
 import {MDBContainer} from "mdbreact";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import YobaContext from "../context/YobaContext";
 
 function humanReadable(seconds) {
     var pad = function (x) {
@@ -18,6 +19,8 @@ function humanReadable(seconds) {
 }
 
 const Emotions = (props) => {
+    const { states } = useContext(YobaContext)
+
     let state = {
         dataLine: {
             labels: [],
@@ -327,7 +330,6 @@ const Emotions = (props) => {
 
     const [load, setLoad] = useState(false);
     const [bin, setBin] = useState();
-    const [time, setTime] = useState();
     const [realtime, setRealtime] = useState("00:00:00");
 
     const onlyClick = (e) => {
@@ -342,17 +344,15 @@ const Emotions = (props) => {
                 .get("http://localhost:8000/api/predict7", {
                     headers: {"Content-Type": "multipart/form-data"},
                     params: {
-                        url: props.url,
+                        url: states.url,
                     },
                 })
                 .then((response) => {
                     const data = response.data;
-                    // console.log(data.predict);
                     let datasets = state.dataLine.datasets;
 
                     for (var i = 0; i < 100; i++) {
                         state.dataLine.labels = state.dataLine.labels.concat(i);
-
                         for (let emo = 0; emo < datasets.length; emo++) {
                             state.dataLine.datasets[emo].data = state.dataLine.datasets[emo].data.concat(
                                 data.predict[datasets[0].label][i]
@@ -379,7 +379,6 @@ const Emotions = (props) => {
                             break;
                         }
                     }
-                    // console.log(state.dataLine);
                     setTest(state.dataLine);
                     setBin(data.bin);
                     setLoad(true);
@@ -388,7 +387,7 @@ const Emotions = (props) => {
         } catch (e) {
             console.log(e);
         }
-    }, [props]);
+    }, [states]);
 
     return (
         <MDBContainer>
