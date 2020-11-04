@@ -33,9 +33,7 @@ def non_url_afreeca(videoID):
 def non_url_youtube(videoID):
     url = "https://www.youtube.com/watch?v=" + videoID
     dict_str = ""
-
     headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'}
-
     html = requests.get(url, headers=headers)
     soup = BeautifulSoup(html.text, "html.parser")
 
@@ -47,7 +45,6 @@ def non_url_youtube(videoID):
 
     # javascript 표기이므로 변형
     dict_str = dict_str.replace('false', 'False').replace('true', 'True').rstrip(' \n;()')
-
     # 사전 형식으로 변환
     dics = literal_eval(dict_str)
     if dics["playabilityStatus"]["status"] != 'Error' and dics['videoDetails']['isLiveContent'] == True:
