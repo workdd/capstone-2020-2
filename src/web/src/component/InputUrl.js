@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
+import YobaContext from "../context/YobaContext";
 import cookie from 'react-cookies';
 
 const InputUrl = (props) => {
-  const [url, setUrl] = useState();
+  const { actions, states } = useContext(YobaContext);
 
   // const temp = localStorage.getItem("loginStorage");
   const temp = cookie.load('data');
@@ -17,18 +18,17 @@ const InputUrl = (props) => {
         .get("http://localhost:8000/api/analysis_url", {
           headers: { "Content-Type": "multipart/form-data" },
           params: {
-            url: url,
+            url: states.url,
           },
         })
         .then((response) => {
           const data = response.data;
           // console.log(data);
-          if(data.result === false) {
+          if (data.result === false) {
             alert("wrong url. please, check url.");
           } else {
-            props.setPlatform(data.result[0]);
-            props.setVideoid(data.result[1]);
-            props.setUrl(url);
+            actions.setPlatform(data.result[0]);
+            actions.setVideoid(data.result[1]);
             props.toggleInput(true);
           }
         })
@@ -37,7 +37,6 @@ const InputUrl = (props) => {
             alert("wrong url. please, check url.");
           }
           // console.log(error);
-
         });
     } catch (e) {
       console.log(e);
@@ -50,8 +49,8 @@ const InputUrl = (props) => {
         .get("http://localhost:8000/api/login", {
           headers: { "Content-Type": "multipart/form-data" },
           params: {
-            email: JSON.parse(temp).email,
-            uuid: JSON.parse(temp).uuid,
+            email: temp.email,
+            uuid: temp.uuid
           },
         })
         .then((response) => {
@@ -63,9 +62,9 @@ const InputUrl = (props) => {
           // props.toggleInput(true);
           // props.setUrl(url);
           if (props.input === true) {
-            props.setPlatform();
-            props.setVideoid();
-            props.setUrl();
+            actions.setPlatform();
+            actions.setVideoid();
+            actions.setUrl();
             props.toggleInput(false);
             alert("reset");
           } else {
@@ -95,7 +94,7 @@ const InputUrl = (props) => {
         justify="center"
         style={{ paddingTop: 40, paddingBottom: 10 }}
       >
-        <Grid xs={2} style={{marginRight: 20}}>
+        <Grid xs={2} style={{ marginRight: 20 }}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -106,7 +105,7 @@ const InputUrl = (props) => {
             id="url"
             fullWidth
             onChange={(e) => {
-              setUrl(e.target.value);
+              actions.setUrl(e.target.value);
             }}
           />
         </Grid>

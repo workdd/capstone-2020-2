@@ -1,12 +1,12 @@
 import {Grid, Link, Typography, Box} from "@material-ui/core";
-import React, {useState} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import axios from "axios";
 import Navibar from "../component/Navibar";
 import Description from "../component/Description";
 import InputUrl from "../component/InputUrl";
-import Login from "../component/Login";
 import Result from "../component/Result";
 import Usage from "../component/Usage";
+import YobaContext from "../context/YobaContext"
 import cookie from 'react-cookies';
 
 function Copyright() {
@@ -23,22 +23,29 @@ function Copyright() {
 }
 
 const MainPage = () => {
-    const [email, setEmail] = useState();
     const [login, toggleLogin] = useState(false);
     const [input, toggleInput] = useState(false);
-    const [platform, setPlatform] = useState();
-    const [videoid, setVideoid] = useState();
-    const [url, setUrl] = useState();
-    const [name, setName] = useState();
+
+    // const temp = localStorage.getItem("loginStorage");
     const temp = cookie.load('data');
+    const {actions} = useContext(YobaContext);
+
+    useEffect(() => {
+        const temp = cookie.load('data');
+        if(temp !== undefined){
+            actions.setEmail(temp.email);
+            actions.setName(temp.name);
+        }
+    });
+
     const test = () => {
         try {
             axios
                 .get("http://localhost:8000/api/login", {
                     headers: {"Content-Type": "multipart/form-data"},
                     params: {
-                        email: JSON.parse(temp).email,
-                        uuid: JSON.parse(temp).uuid,
+                        email: temp.email,
+                        uuid: temp.uuid,
                     },
                 })
                 .then((response) => {
@@ -46,10 +53,8 @@ const MainPage = () => {
                     // console.log(data);
                     // localStorage.setItem("loginStorage", JSON.stringify(data));
                     cookie.save('data', JSON.stringify(data), {path: '/'});
-                    console.log(temp);
-
-                    setEmail(JSON.parse(temp).email);
-                    setName(JSON.parse(temp).name);
+                    actions.setEmail(temp.email);
+                    actions.setName(temp.name);
                     toggleLogin(true);
                 })
                 .catch(function (error) {
@@ -62,6 +67,7 @@ const MainPage = () => {
                     }
                 });
         } catch (e) {
+
             console.log(e);
         }
     };
@@ -69,13 +75,9 @@ const MainPage = () => {
     return (
         <div onLoad={test}>
             <Navibar
-                email={email}
-                name={name}
                 login={login}
                 toggleInput={toggleInput}
                 toggleLogin={toggleLogin}
-                setEmail={setEmail}
-                setName={setName}
             />
 
             <Grid>
@@ -85,10 +87,7 @@ const MainPage = () => {
             {login ? (
                 <InputUrl
                     toggleInput={toggleInput}
-                    setUrl={setUrl}
                     toggleLogin={toggleLogin}
-                    setPlatform={setPlatform}
-                    setVideoid={setVideoid}
                     input={input}
                 ></InputUrl>
             ) : (
@@ -96,7 +95,7 @@ const MainPage = () => {
             )}
 
             {input & login ? (
-                <Result url={url} platform={platform} videoid={videoid}></Result>
+                <Result></Result>
             ) : (
                 <></>
             )}

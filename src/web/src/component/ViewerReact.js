@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { Line } from "react-chartjs-2";
 import { MDBContainer } from "mdbreact";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import YobaContext from "../context/YobaContext"
 
 function humanReadable(seconds) {
   var pad = function (x) {
@@ -18,6 +19,8 @@ function humanReadable(seconds) {
 }
 
 const ViewerReact = (props) => {
+  const { states } = useContext(YobaContext)
+
   let state = {
     dataLine: {
       labels: [],
@@ -118,7 +121,6 @@ const ViewerReact = (props) => {
 
   const [load, setLoad] = useState(false);
   const [bin, setBin] = useState();
-  const [time, setTime] = useState();
   const [realtime, setRealtime] = useState("00:00:00");
 
   const onlyClick = (e) => {
@@ -133,7 +135,7 @@ const ViewerReact = (props) => {
         .get("http://localhost:8000/api/predict", {
           headers: { "Content-Type": "multipart/form-data" },
           params: {
-            url: props.url,
+            url: states.url,
           },
         })
         .then((response) => {
@@ -170,6 +172,7 @@ const ViewerReact = (props) => {
       console.log(e);
     }
   }, [props]);
+  
   return (
     <MDBContainer>
       <h3 className="mt-5">Positive & Negative</h3>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -10,6 +10,7 @@ import SignUp from "./SignUp";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import YobaContext from "../context/YobaContext"
 import cookie from 'react-cookies'
 
 const useStyles = makeStyles((theme) => ({
@@ -34,6 +35,7 @@ const Login = (props) => {
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
+  const { actions } = useContext(YobaContext);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -57,18 +59,19 @@ const Login = (props) => {
           // localStorage.setItem("loginStorage", JSON.stringify(data));
           cookie.save('data',JSON.stringify(data),{path:'/'});
 
-          console.log(cookie.load('data'))
-          props.setEmail(email);
-          props.setName(data.name);
+          actions.setEmail(email);
+          actions.setName(data.name);
           props.toggleLogin(true);
           return true;
         })
         .catch(function (error) {
           if (error.response.status === 400) {
+            cookie.remove('data');
             props.toggleLogin(false);
             alert("wrong information");
           }
           if (error.response.status === 404) {
+            cookie.remove('data');
             props.toggleLogin(false);
             alert("wrong id or pw");
           }
