@@ -4,11 +4,13 @@ import axios from "axios";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 import YobaContext from "../context/YobaContext";
+import cookie from 'react-cookies';
 
 const InputUrl = (props) => {
   const { actions, states } = useContext(YobaContext);
 
-  const temp = localStorage.getItem("loginStorage");
+  // const temp = localStorage.getItem("loginStorage");
+  const temp = cookie.load('data');
 
   const checkUrl = () => {
     try {
@@ -47,13 +49,18 @@ const InputUrl = (props) => {
         .get("http://localhost:8000/api/login", {
           headers: { "Content-Type": "multipart/form-data" },
           params: {
-            email: JSON.parse(temp).email,
-            uuid: JSON.parse(temp).uuid,
+            email: temp.email,
+            uuid: temp.uuid
           },
         })
         .then((response) => {
           const data = response.data;
-          localStorage.setItem("loginStorage", JSON.stringify(data));
+          // console.log(data);
+
+          // localStorage.setItem("loginStorage", JSON.stringify(data));
+          cookie.save('data',JSON.stringify(data),{path:'/'})
+          // props.toggleInput(true);
+          // props.setUrl(url);
           if (props.input === true) {
             actions.setPlatform();
             actions.setVideoid();
@@ -66,7 +73,8 @@ const InputUrl = (props) => {
         })
         .catch(function (error) {
           if (error.response.status === 401) {
-            localStorage.removeItem("loginStorage");
+            // localStorage.removeItem("loginStorage");
+            cookie.remove('data');
             props.toggleLogin(false);
             props.toggleInput(false);
             alert("please, you need sign in again.");
