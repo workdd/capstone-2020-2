@@ -1,11 +1,12 @@
 import { Grid, Link, Typography, Box } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import Navibar from "../component/Navibar";
 import Description from "../component/Description";
 import InputUrl from "../component/InputUrl";
 import Result from "../component/Result";
 import Usage from "../component/Usage";
+import YobaContext from "../context/YobaContext"
 
 function Copyright() {
   return (
@@ -21,14 +22,11 @@ function Copyright() {
 }
 
 const MainPage = () => {
-  const [email, setEmail] = useState();
   const [login, toggleLogin] = useState(false);
   const [input, toggleInput] = useState(false);
-  const [platform, setPlatform] = useState();
-  const [videoid, setVideoid] = useState();
-  const [name, setName] = useState();
 
   const temp = localStorage.getItem("loginStorage");
+  const { actions } = useContext(YobaContext);
 
   const test = () => {
     try {
@@ -44,8 +42,8 @@ const MainPage = () => {
           const data = response.data;
           // console.log(data);
           localStorage.setItem("loginStorage", JSON.stringify(data));
-          setEmail(JSON.parse(temp).email);
-          setName(JSON.parse(temp).name);
+          actions.setEmail(JSON.parse(temp).email);
+          actions.setName(JSON.parse(temp).name);
           toggleLogin(true);
         })
         .catch(function (error) {
@@ -64,13 +62,9 @@ const MainPage = () => {
   return (
     <div onLoad={test}>
       <Navibar
-        email={email}
-        name={name}
         login={login}
         toggleInput={toggleInput}
         toggleLogin={toggleLogin}
-        setEmail={setEmail}
-        setName={setName}
       />
 
       <Grid>
@@ -81,8 +75,6 @@ const MainPage = () => {
         <InputUrl
           toggleInput={toggleInput}
           toggleLogin={toggleLogin}
-          setPlatform={setPlatform}
-          setVideoid={setVideoid}
           input={input}
         ></InputUrl>
       ) : (
@@ -90,7 +82,7 @@ const MainPage = () => {
       )}
 
       {input & login ? (
-        <Result platform={platform} videoid={videoid}></Result>
+        <Result></Result>
       ) : (
         <></>
       )}
