@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import TextField from "@material-ui/core/TextField";
@@ -25,8 +25,8 @@ const InputUrl = (props) => {
           if (data.result === false) {
             alert("wrong url. please, check url.");
           } else {
-            props.setPlatform(data.result[0]);
-            props.setVideoid(data.result[1]);
+            actions.setPlatform(data.result[0]);
+            actions.setVideoid(data.result[1]);
             props.toggleInput(true);
           }
         })
@@ -55,8 +55,8 @@ const InputUrl = (props) => {
           const data = response.data;
           localStorage.setItem("loginStorage", JSON.stringify(data));
           if (props.input === true) {
-            props.setPlatform();
-            props.setVideoid();
+            actions.setPlatform();
+            actions.setVideoid();
             actions.setUrl();
             props.toggleInput(false);
             alert("reset");

@@ -99,7 +99,7 @@ const Result = (props) => {
     } else {
       setHigh(true);
     }
-  }, [props]);
+  }, [states]);
 
   const audio = () => {
     try {
@@ -170,7 +170,7 @@ const Result = (props) => {
 
   return (
     <div>
-      {props.platform !== "AfreecaTV" ? (
+      {states.platform !== "AfreecaTV" ? (
         <h4 className="mt-5">
           Click on the "Highligh Point" table to go to the click position
         </h4>
@@ -185,7 +185,7 @@ const Result = (props) => {
         justify="space-between"
       >
         <Grid xs={1}></Grid>
-        {props.platform !== "AfreecaTV" ? (
+        {states.platform !== "AfreecaTV" ? (
           <ReactPlayer
             ref={player_ref}
             playing
@@ -214,8 +214,8 @@ const Result = (props) => {
         {high ? (
           <Grid xs={6}>
             <Highlight
-              platform={props.platform}
-              videoid={props.videoid}
+              platform={states.platform}
+              videoid={states.videoid}
               setTime={setTime}
               setCheck={setCheck}
             ></Highlight>
@@ -278,8 +278,8 @@ const Result = (props) => {
         {keyword ? (
           <Grid xs={6}>
             <ViewerRank
-              platform={props.platform}
-              videoid={props.videoid}
+              platform={states.platform}
+              videoid={states.videoid}
             ></ViewerRank>
           </Grid>
         ) : (

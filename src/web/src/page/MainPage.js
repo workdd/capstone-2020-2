@@ -24,8 +24,6 @@ const MainPage = () => {
   const [email, setEmail] = useState();
   const [login, toggleLogin] = useState(false);
   const [input, toggleInput] = useState(false);
-  const [platform, setPlatform] = useState();
-  const [videoid, setVideoid] = useState();
   const [name, setName] = useState();
 
   const temp = localStorage.getItem("loginStorage");
@@ -81,8 +79,6 @@ const MainPage = () => {
         <InputUrl
           toggleInput={toggleInput}
           toggleLogin={toggleLogin}
-          setPlatform={setPlatform}
-          setVideoid={setVideoid}
           input={input}
         ></InputUrl>
       ) : (
@@ -90,7 +86,7 @@ const MainPage = () => {
       )}
 
       {input & login ? (
-        <Result platform={platform} videoid={videoid}></Result>
+        <Result></Result>
       ) : (
         <></>
       )}

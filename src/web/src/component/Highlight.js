@@ -101,7 +101,7 @@ const Highlight = (props) => {
 
   const onClick = (e) => {
     // console.log(e.point);
-    if (props.platform !== "AfreecaTV") {
+    if (states.platform !== "AfreecaTV") {
       props.setTime(makeTime(e.point));
       props.setCheck(true);
     }

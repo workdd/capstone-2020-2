@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Pie } from "react-chartjs-2";
 import { MDBContainer } from "mdbreact";
@@ -9,6 +9,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import YobaContext from "../context/YobaContext"
 
 function humanReadable(seconds) {
   var pad = function (x) {
@@ -96,6 +97,7 @@ const ViewerRank = (props) => {
   const [timeList, setTimeList] = useState([[[]]]);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState();
+  const { states } = useContext(YobaContext);
 
   const closeAlert = () => {
     setAlertOpen(false);
@@ -108,8 +110,8 @@ const ViewerRank = (props) => {
         .get("http://localhost:8000/api/chatlog", {
           headers: { "Content-Type": "multipart/form-data" },
           params: {
-            platform: props.platform,
-            videoid: props.videoid,
+            platform: states.platform,
+            videoid: states.videoid,
           },
         })
         .then((response) => {
@@ -136,7 +138,7 @@ const ViewerRank = (props) => {
     } catch (e) {
       console.log(e);
     }
-  }, [props]);
+  }, [states]);
 
   const showAlert = (e) => {
     // console.log(e);
