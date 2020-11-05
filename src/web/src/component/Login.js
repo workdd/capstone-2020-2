@@ -11,6 +11,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import YobaContext from "../context/YobaContext"
+import cookie from 'react-cookies'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -32,7 +33,7 @@ const Login = (props) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const classes = useStyles();
-  
+
   const [open, setOpen] = useState(false);
   const { actions } = useContext(YobaContext);
 
@@ -55,7 +56,9 @@ const Login = (props) => {
         .then((response) => {
           const data = response.data;
           // console.log(data);
-          localStorage.setItem("loginStorage", JSON.stringify(data));
+          // localStorage.setItem("loginStorage", JSON.stringify(data));
+          cookie.save('data',JSON.stringify(data),{path:'/'});
+
           actions.setEmail(email);
           actions.setName(data.name);
           props.toggleLogin(true);
@@ -63,10 +66,12 @@ const Login = (props) => {
         })
         .catch(function (error) {
           if (error.response.status === 400) {
+            cookie.remove('data');
             props.toggleLogin(false);
             alert("wrong information");
           }
           if (error.response.status === 404) {
+            cookie.remove('data');
             props.toggleLogin(false);
             alert("wrong id or pw");
           }
