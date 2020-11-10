@@ -9,15 +9,18 @@ from settings.utils import api
 app = Blueprint('file', __name__, url_prefix='/api')
 
 
-@app.route('/upload_file', methods=['POST'])
-@api
-def post_upload_file(data, db):
-    req_list = ['name', 'url']
-    for i in req_list:  # 필수 요소 들어있는지 검사
+def error_checker(data):
+    for i in ['name', 'url']:  # 필수 요소 들어있는지 검사
         if i not in data:
             raise BadRequest
     if 'file' not in request.files:  # 파일 존재하는지 검사
         raise BadRequest
+
+
+@app.route('/upload_file', methods=['POST'])
+@api
+def post_upload_file(data, db):
+    error_checker(data)
 
     query = db.query(File).filter(
         File.url == data['url'],
