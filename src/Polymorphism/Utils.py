@@ -1,10 +1,15 @@
 import json
 import math
 import requests
+import urllib.request
+
+
+def url_error_checker(url):
+    return urllib.request.urlopen(url).status != 200
 
 
 def twitch_downloader(platform):
-    url = 'https://api.twitch.tv/v5/videos/' + platform.video_id + '/comments'
+    url = f'https://api.twitch.tv/v5/videos/{platform.video_id}/comments'
     client_id = "x7cy2lvfh9aob9oyset31dhbfng1tc"
 
     param = {"content_offset_seconds": 0}

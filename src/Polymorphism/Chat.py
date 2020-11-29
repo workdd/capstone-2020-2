@@ -3,7 +3,7 @@ import os
 import Utils
 
 
-class Chat():
+class Chat:
     def __init__(self, platform):
         self.platform = platform
 

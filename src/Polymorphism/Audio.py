@@ -22,6 +22,7 @@ class Audio():
 
     def load_audio(self, filetype):
         files = []
+        audio = None
         for i in os.listdir(f'./{filetype}/{self.platform.platform_name}/'):
             if self.platform.video_id in i:
                 files.append(i)
