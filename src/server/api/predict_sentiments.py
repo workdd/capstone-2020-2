@@ -1,6 +1,7 @@
 
-from analyze.chat import *
-from api.ana_url import split_url
+from Polymorphism.Chat import *
+from Polymorphism.Utils import *
+from Polymorphism.Platform import *
 from chatsentiment.pos_neg_spm import predict_pos_neg
 from werkzeug.exceptions import BadRequest
 from models.highlight import Predict
@@ -18,7 +19,10 @@ app = Blueprint('predict', __name__, url_prefix='/api')
 @api
 def get_predict(data, db):
     url = data['url']
-    isURLValid = split_url(url)
+
+    pt = Platform(url)
+    cl = eval(url_to_parser(url))
+    isURLValid = cl(pt)
 
     if not isURLValid:
         raise BadRequest
@@ -30,7 +34,10 @@ def get_predict(data, db):
     if query:
         return query.predict_json
 
-    chat = Chat(isURLValid[0], isURLValid[1])
+    pt = Platform(url)
+    pt._platform_name = isURLValid[0]
+    pt._video_id = isURLValid[1]
+    chat = Chat(pt)
     chat.download()
 
     with open('./chatlog/{}/{}.txt'.format(isURLValid[0], isURLValid[1]), encoding='utf-8') as f:

@@ -6,7 +6,7 @@ import requests
 from ast import literal_eval
 from bs4 import BeautifulSoup
 
-import Utils
+from Polymorphism.Utils import *
 
 
 class Platform:
@@ -47,7 +47,7 @@ class Twitch(Platform):
 
 
     def split_url(self):
-        if Utils.url_error_checker(self.url):
+        if DOWN_LOADERS[self.platform_name](Platform).url_error_checker(self.url):
             return False
 
         if 'clip' in self.url:
@@ -84,7 +84,7 @@ class Youtube(Platform):
         return False
 
     def split_url_youtube(self):
-        if Utils.url_error_checker(self.url):
+        if DOWN_LOADERS[self.platform_name](Platform).url_error_checker(self.url):
             return False
 
         if 'youtube' in self.url:
@@ -95,9 +95,9 @@ class Youtube(Platform):
         # 오류나면 Error, 아니면 OK
         return self.non_url() if len(self.video_id) == 11 else False
 
-class AreecaTV(Platform):
+class AfreecaTV(Platform):
     def __init__(self, url):
-        super(AreecaTV, url).__init__(url)
+        super(AfreecaTV, url).__init__(url)
 
     def non_url(self):
         url = 'http://vod.afreecatv.com/PLAYER/STATION/' + self.video_id
@@ -113,7 +113,7 @@ class AreecaTV(Platform):
         return False
 
     def split_url(self):
-        if Utils.url_error_checker(self.url):
+        if DOWN_LOADERS[self.platform_name](Platform).url_error_checker(self.url):
             return False
 
         if "afreecatv" in self.url:

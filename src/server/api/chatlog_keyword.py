@@ -7,7 +7,8 @@ from werkzeug.exceptions import BadRequest
 
 from models.chat import Keyword
 from settings.utils import api
-from analyze.chat import *
+from Polymorphism.Platform import *
+from Polymorphism.Chat import *
 
 
 app = Blueprint('chatlog', __name__, url_prefix='/api')
@@ -30,7 +31,10 @@ def get_chatlog(data, db):
         Keyword.videoid == videoid,).first()
     if query:
         return jsonify(query.keyword_json)
-    chat = Chat(platform, videoid)
+    pt = Platform()
+    pt._platform_name = platform
+    pt._video_id = videoid
+    chat = Chat(pt)
     chat.download()
     chat.find_high_frequency_words()
 

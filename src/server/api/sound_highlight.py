@@ -8,8 +8,9 @@ from werkzeug.exceptions import BadRequest, NotAcceptable, Conflict, NotFound
 from models.highlight import SoundHighlight
 
 from settings.utils import api
-from analyze.audio import *
-from api.ana_url import split_url
+from Polymorphism.Platform import *
+from Polymorphism.Audio import *
+from Polymorphism.Utils import *
 
 app = Blueprint('SNDhighlight', __name__, url_prefix='/api')
 
@@ -45,11 +46,15 @@ def get_sound_highlight(data, db):
     ).first()
     if query:
         return jsonify(query.highlight_json)
-
-    url_result = split_url(url)
+    pt = Platform(url)
+    cl = eval(url_to_parser(url))
+    url_result = cl(pt).split_url()
 
     if url_result != False:
-        audio = Audio(url_result[0], url_result[1], url)
+        pt = Platform(url)
+        pt._platform_name = url_result[0]
+        pt._video_id = url_result[1]
+        audio = Audio(pt)
         audio.download()
         audio.sound_extract()
         audio.analyze_highlight()

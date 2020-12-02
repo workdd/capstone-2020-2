@@ -27,7 +27,9 @@ def error_checker_with_db(data, db):
 @api
 def get_login(data, db):  # 회원정보 불러옴
     error_checker_with_db(data, db)
-
+    user = db.query(UserInfo).filter(
+        UserInfo.email == data['email'],
+    ).first()
     login_expiry = db.query(LoginExpiry).filter(
         LoginExpiry.email == data['email'],
         LoginExpiry.uuid == data['uuid'],

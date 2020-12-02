@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import os
 
 
-class Audio():
+class Audio:
     def __init__(self, platform):
         self.platform = platform
         self.data = []

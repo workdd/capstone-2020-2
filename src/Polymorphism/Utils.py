@@ -2,11 +2,19 @@ import json
 import math
 import requests
 import urllib.request
-import BeautifulSoup
+from bs4 import BeautifulSoup
 from xml.etree import ElementTree
 import re
 from ast import literal_eval
 
+def url_to_parser(url):
+    if "afree" in url:
+        return 'AfreecaTV'
+    elif "twitch" in url:
+        return 'Twitch'
+    elif "youtu" in url:
+        return 'Youtube'
+    return False
 
 def url_error_checker(url):
     return urllib.request.urlopen(url).status != 200

@@ -1,7 +1,9 @@
 import numpy
 from models.highlight import Predict7
-from analyze.chat import *
-from api.ana_url import split_url
+
+from Polymorphism.Chat import *
+from Polymorphism.Platform import *
+from Polymorphism.Utils import *
 from werkzeug.exceptions import BadRequest
 from sentiment7.sentiment7 import predict_7sentiment
 from settings.utils import api
@@ -24,7 +26,10 @@ def second_comment_spliiter(content):
 
 
 def second_comment_extractor(isURLValid):
-    chat = Chat(isURLValid[0], isURLValid[1])
+    pt = Platform()
+    pt._platform_name = isURLValid[0]
+    pt._video_id = isURLValid[1]
+    chat = Chat(pt)
     chat.download()
     with open('./chatlog/{}/{}.txt'.format(isURLValid[0], isURLValid[1]), encoding='utf-8') as f:
         content = f.read().split('\n')
@@ -56,7 +61,10 @@ def prediction_unit_extractor(prediction, inc):
 @api
 def get_predict7(data, db):
     url = data['url']
-    isURLValid = split_url(data['url'])
+
+    pt = Platform(url)
+    cl = eval(url_to_parser(url))
+    isURLValid = cl(pt).split_url()
     if not isURLValid:
         raise BadRequest
 

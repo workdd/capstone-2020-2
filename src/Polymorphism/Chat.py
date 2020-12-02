@@ -1,7 +1,6 @@
 import os
 
-import Utils
-
+from Polymorphism.Utils import *
 
 class Chat:
     def __init__(self, platform):
@@ -21,7 +20,7 @@ class Chat:
                     continue
                 self.platform.chatlog.append([int(splited_line[0][1:-1]), splited_line[1][1:-1], splited_line[2]])
         else:
-            Utils.DOWN_LOADERS[self.platform.platform_name](self.platform)
+            DOWN_LOADERS[self.platform.platform_name](self.platform)
             self.array_to_file()
 
         count = [0 for i in range(self.platform.chatlog[-1][0] + 1)]
