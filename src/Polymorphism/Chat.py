@@ -1,9 +1,12 @@
 import os
 
 from Polymorphism.Utils import *
+from Polymorphism.Data import *
 
-class Chat:
+from konlpy.tag import Okt
+class Chat(Data):
     def __init__(self, platform):
+        super().__init__()
         self.platform = platform
 
     def download(self):
@@ -29,14 +32,14 @@ class Chat:
 
         for i in range(0, len(count), self.platform.unit_of_time):  # time_range 초 단위로 쪼개서 단위 시간 내 가장 큰 값 추출
             end_slicing_index = len(count) if len(count) - i < self.platform.unit_of_time else i + self.platform.unit_of_time
-            self.platform.data.append(max(count[i:end_slicing_index]))
+            self.data.append(max(count[i:end_slicing_index]))
         return self.platform.chatlog
 
     def data_getter(self):
         pass
 
     def array_to_file(self):
-        file_name = f'./chatlog/{self.platform.platform}/{self.platform.video_id}.txt'
+        file_name = f'./chatlog/{self.platform.platform_name}/{self.platform.video_id}.txt'
         chat_log = self.platform.chatlog
         with open(file_name, 'w', encoding="utf-8") as f:
             for i in range(0, len(chat_log)):
@@ -79,7 +82,8 @@ class Chat:
                 start_time = time[key][0]
                 count = 1
                 for j in range(1, len(time[key])):
-                    if time[key][j] - time[key][j - 1] > n:
+                    time_sliced = [a - b for a, b in zip(time[key][j], time[key][j - 1])]
+                    if time_sliced > n:
                         if count >= m:
                             end_time = time[key][j - 1]
                             if key not in section_dic:

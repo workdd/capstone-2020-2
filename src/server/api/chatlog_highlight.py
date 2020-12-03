@@ -10,6 +10,7 @@ from settings.utils import api
 from Polymorphism.Platform import *
 from Polymorphism.Chat import *
 from Polymorphism.Utils import *
+from analyze.data import *
 
 app = Blueprint('chatlog_highlight', __name__, url_prefix='/api')
 
@@ -19,9 +20,9 @@ def get_url_with_error_check(data):
         raise BadRequest
 
     url = data['url']
-    pt = Platform(url)
+
     cl = eval(url_to_parser(url))
-    url_result = cl(pt).split_url()
+    url_result = cl(url).split_url()
     if url_result == False:
         raise NotAcceptable  # 유효하지 않은 URL
     return url_result
@@ -39,11 +40,12 @@ def get_chatlog_highlight(data, db):
     if query:
         return jsonify(query.highlight_json)
 
-    pt = Platform()
-    pt._platform_name = url_result[0]
-    pt._video_id = url_result[1]
+    pt = Platform("")
+    pt.platform_name = url_result[0]
+    pt.video_id = url_result[1]
     chat = Chat(pt)
     chat.download()
+
     chat.analyze_highlight()
 
     result = {"highlight": chat.point}

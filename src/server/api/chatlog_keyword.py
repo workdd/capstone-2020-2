@@ -31,9 +31,9 @@ def get_chatlog(data, db):
         Keyword.videoid == videoid,).first()
     if query:
         return jsonify(query.keyword_json)
-    pt = Platform()
-    pt._platform_name = platform
-    pt._video_id = videoid
+    pt = Platform("")
+    pt.platform_name = platform
+    pt.video_id = videoid
     chat = Chat(pt)
     chat.download()
     chat.find_high_frequency_words()

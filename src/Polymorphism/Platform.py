@@ -31,7 +31,7 @@ class Platform:
 
 class Twitch(Platform):
     def __init__(self, url):
-        super(Twitch, self).__init__(url)
+        super().__init__(url)
 
     def non_url(self):
         url = 'https://api.twitch.tv/v5/videos/' + self.video_id
@@ -45,21 +45,23 @@ class Twitch(Platform):
             return ['Twitch', self.video_id]
         return False
 
-
     def split_url(self):
-        if DOWN_LOADERS[self.platform_name](Platform).url_error_checker(self.url):
+        if url_error_checker(self.url):
             return False
 
         if 'clip' in self.url:
+            return False
+        if type(self.url) != type(""):
             return False
         self.video_id = re.search(r"https://www.twitch.tv/videos/[0-9]+", self.url).group().split('/')[-1]
         # videoID길이가 9가 아니면 invalid
         # 없는 영상이면 http 에러코드, 아니면 recorded
         return self.non_url() if len(self.video_id) == 9 else False
 
+
 class Youtube(Platform):
     def __init__(self, url):
-        super(Youtube, self).__init__(url)
+        super().__init__(url)
 
     def non_url(self):
         url = f"https://www.youtube.com/watch?v={self.video_id}"
@@ -84,20 +86,22 @@ class Youtube(Platform):
         return False
 
     def split_url_youtube(self):
-        if DOWN_LOADERS[self.platform_name](Platform).url_error_checker(self.url):
+        if url_error_checker(self.url):
             return False
 
         if 'youtube' in self.url:
-            self.video_id = re.search(r"https://www.youtube.com/watch\?v=[a-zA-Z0-_-]+", self.url).group().split('=')[-1]
+            self.video_id = re.search(r"https://www.youtube.com/watch\?v=[a-zA-Z0-_-]+", self.url).group().split('=')[
+                -1]
         else:
             self.video_id = re.search(r"https://youtu.be/[a-zA-Z0-_-]+", self.url).group().split('/')[-1]
         # videoID길이가 11이 아니면 invalid
         # 오류나면 Error, 아니면 OK
         return self.non_url() if len(self.video_id) == 11 else False
 
+
 class AfreecaTV(Platform):
     def __init__(self, url):
-        super(AfreecaTV, url).__init__(url)
+        super().__init__(url)
 
     def non_url(self):
         url = 'http://vod.afreecatv.com/PLAYER/STATION/' + self.video_id
@@ -113,7 +117,7 @@ class AfreecaTV(Platform):
         return False
 
     def split_url(self):
-        if DOWN_LOADERS[self.platform_name](Platform).url_error_checker(self.url):
+        if url_error_checker(self.url):
             return False
 
         if "afreecatv" in self.url:
@@ -122,7 +126,3 @@ class AfreecaTV(Platform):
         # videoID길이가 8이 아니면 invalid
         # 오류시 길이 2, 오류 안나면 2초과
         return self.non_url() if len(self.video_id) == 8 else False
-
-
-
-

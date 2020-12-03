@@ -46,14 +46,13 @@ def get_sound_highlight(data, db):
     ).first()
     if query:
         return jsonify(query.highlight_json)
-    pt = Platform(url)
     cl = eval(url_to_parser(url))
-    url_result = cl(pt).split_url()
+    url_result = cl(url).split_url()
 
     if url_result != False:
-        pt = Platform(url)
-        pt._platform_name = url_result[0]
-        pt._video_id = url_result[1]
+        pt = Platform("")
+        pt.platform_name = url_result[0]
+        pt.video_id = url_result[1]
         audio = Audio(pt)
         audio.download()
         audio.sound_extract()

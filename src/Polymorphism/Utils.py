@@ -155,5 +155,5 @@ def afreeca_chat_downloader(platform):  # 아프리카 채팅기록을 튜플로
 
 DOWN_LOADERS = {'twitch':twitch_chat_downloader,
                 'youtube':youtube_chat_downloader,
-                'afreeca':afreeca_chat_downloader
+                'AfreecaTV':afreeca_chat_downloader
                 }

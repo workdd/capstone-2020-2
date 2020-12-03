@@ -4,11 +4,13 @@ from moviepy.editor import *
 import matplotlib.pyplot as plt
 import os
 
+from Polymorphism.Utils import *
+from Polymorphism.Data import *
 
-class Audio:
+class Audio(Data):
     def __init__(self, platform):
+        super().__init__()
         self.platform = platform
-        self.data = []
 
     def download(self):
         dw_opts = {'format': 'worstaudio/worst', 'extractaudio': True, 'audioformat': "mp3",
