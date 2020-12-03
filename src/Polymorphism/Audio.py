@@ -14,8 +14,9 @@ class Audio(Data):
 
     def download(self):
         dw_opts = {'format': 'worstaudio/worst', 'extractaudio': True, 'audioformat': "mp3",
-                   'outtmpl': "audio/" + self.platform.platform_name + '/' + self.platform.video_id +\
-                              '_' + '%(playlist_index)s' + ".mp3"}
+                   'outtmpl': "audio/" + self.platform.platform_name + '/' + self.platform.video_id
+                              + '_' + '%(playlist_index)s' + ".mp3"}
+
         try:
             with youtube_dl.YoutubeDL(dw_opts) as ydl:
                 ydl.download([self.platform.url])

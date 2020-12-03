@@ -26,9 +26,9 @@ def second_comment_spliiter(content):
 
 
 def second_comment_extractor(isURLValid):
-    pt = Platform()
-    pt._platform_name = isURLValid[0]
-    pt._video_id = isURLValid[1]
+    pt = Platform("")
+    pt.platform_name = isURLValid[0]
+    pt.video_id = isURLValid[1]
     chat = Chat(pt)
     chat.download()
     with open('./chatlog/{}/{}.txt'.format(isURLValid[0], isURLValid[1]), encoding='utf-8') as f:

@@ -65,11 +65,17 @@ class Chat(Data):
             for key in set(okt.nouns(data[2])):
                 if len(key) < 2:
                     continue
-                if key not in freq:
-                    freq[key] = 0
-                    time[key] = []
-                freq[key] += 1
-                time[key].append([data[0]])
+                elif key in freq.keys():
+                    freq[key] += 1
+                    time[key].append(data[0])
+                else:
+                    freq[key] = 1
+                    time[key] = [data[0]]
+                # if key not in freq:
+                #     freq[key] = 0
+                #     time[key] = []
+                # freq[key] += 1
+                # time[key].append([data[0]])
 
         sorted_freq = sorted(freq.items(), key=lambda x: x[1], reverse=True)
 
@@ -82,8 +88,7 @@ class Chat(Data):
                 start_time = time[key][0]
                 count = 1
                 for j in range(1, len(time[key])):
-                    time_sliced = [a - b for a, b in zip(time[key][j], time[key][j - 1])]
-                    if time_sliced > n:
+                    if time[key][j] - time[key][j - 1] > n:
                         if count >= m:
                             end_time = time[key][j - 1]
                             if key not in section_dic:
@@ -104,4 +109,4 @@ class Chat(Data):
 
         for key in list(section_dic.keys())[:10]:
             self.platform.section.append([key, str(freq[key]), section_dic[key]])
-        self.platform.print_section_hhmmss()
+        self.print_section_hhmmss()

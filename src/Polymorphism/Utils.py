@@ -6,6 +6,9 @@ from bs4 import BeautifulSoup
 from xml.etree import ElementTree
 import re
 from ast import literal_eval
+import ssl
+
+context = ssl._create_unverified_context()
 
 def url_to_parser(url):
     if "afree" in url:
@@ -17,7 +20,7 @@ def url_to_parser(url):
     return False
 
 def url_error_checker(url):
-    return urllib.request.urlopen(url).status != 200
+    return urllib.request.urlopen(url,context=context).status != 200
 
 
 def twitch_chat_downloader(platform):
@@ -153,7 +156,7 @@ def afreeca_chat_downloader(platform):  # 아프리카 채팅기록을 튜플로
             i += 1
 
 
-DOWN_LOADERS = {'twitch':twitch_chat_downloader,
-                'youtube':youtube_chat_downloader,
+DOWN_LOADERS = {'Twitch':twitch_chat_downloader,
+                'Youtube':youtube_chat_downloader,
                 'AfreecaTV':afreeca_chat_downloader
                 }

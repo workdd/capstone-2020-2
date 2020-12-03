@@ -51,11 +51,11 @@ class Twitch(Platform):
 
         if 'clip' in self.url:
             return False
-        if type(self.url) != type(""):
-            return False
-        self.video_id = re.search(r"https://www.twitch.tv/videos/[0-9]+", self.url).group().split('/')[-1]
+
+        # self.video_id = re.search(r"https://www.twitch.tv/videos/[0-9]+", self.url).group().split('/')[-1]
         # videoID길이가 9가 아니면 invalid
         # 없는 영상이면 http 에러코드, 아니면 recorded
+        self.video_id = self.url.split('/')[-1]
         return self.non_url() if len(self.video_id) == 9 else False
 
 

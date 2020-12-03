@@ -10,7 +10,6 @@ from settings.settings import MODE
 from settings.utils import api
 from Polymorphism.Platform import *
 from Polymorphism.Audio import *
-from analyze.audio import *
 import boto3
 
 s3 = boto3.resource('s3')
@@ -69,16 +68,19 @@ def get_sound_normalize(data, db):
         return jsonify({'image_url': file.image_url})
     pt = Platform(url)
     cl = eval(url_to_parser(url))
-    url_result = cl(pt).split_url()
+    url_result = cl(url).split_url()
 
     if url_result != False:
-        pt = Platform(url)
-        pt._platform_name = url_result[0]
-        pt._video_id = url_result[1]
-        audio = Audio(pt)
+        audio = Audio(url_result[0], url_result[1], url)
+        # pt = Platform(url)
+        # pt.platform_name = url_result[0]
+        # pt.video_id = url_result[1]
+        # audio = Audio(pt)
         audio.download()
+
         audio.sound_extract()
         audio.save_graph()
+
         image = {'url': url, 'name': f"./audio/normalizeAudio/{url_result[0]}/{url_result[1]}.png"}
 
         image_path = upload_image(image, db, url_result[0], url_result[1])

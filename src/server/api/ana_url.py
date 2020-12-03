@@ -5,7 +5,9 @@ from flask import Blueprint, jsonify
 from werkzeug.exceptions import BadRequest
 from settings.utils import api
 
+import ssl
 
+context = ssl._create_unverified_context()
 def split_url_afreeca(url):
     if "afreecatv" in url:
         url = re.search(r"http://vod.afreecatv.com/PLAYER/STATION/[0-9]+", url).group()
@@ -37,7 +39,7 @@ def split_url_youtube(url):
 def split_url(url):
     try:
         # 작동하는 url인지 확인
-        if urllib.request.urlopen(url).status != 200:
+        if urllib.request.urlopen(url,context=context).status != 200:
             return False
 
         if "afree" in url:
