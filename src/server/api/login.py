@@ -12,12 +12,8 @@ from settings.utils import api
 
 app = Blueprint('login', __name__, url_prefix='/api')
 
-
-@app.route('/login', methods=['GET'])
-@api
-def get_login(data, db):  # 회원정보 불러옴
-    req_list = ['email', 'uuid']
-    for i in req_list:  # 필수 요소 들어있는지 검사
+def error_checker_with_db(data, db):
+    for i in ['email', 'uuid']:  # 필수 요소 들어있는지 검사
         if i not in data:
             raise BadRequest
     user = db.query(UserInfo).filter(
@@ -26,6 +22,14 @@ def get_login(data, db):  # 회원정보 불러옴
     if not user:
         raise NotFound
 
+
+@app.route('/login', methods=['GET'])
+@api
+def get_login(data, db):  # 회원정보 불러옴
+    error_checker_with_db(data, db)
+    user = db.query(UserInfo).filter(
+        UserInfo.email == data['email'],
+    ).first()
     login_expiry = db.query(LoginExpiry).filter(
         LoginExpiry.email == data['email'],
         LoginExpiry.uuid == data['uuid'],
@@ -48,8 +52,7 @@ def get_login(data, db):  # 회원정보 불러옴
 @app.route('/login', methods=['POST'])
 @api
 def post_login(data, db):  # 로그인
-    req_list = ['email', 'pw']
-    for i in req_list:  # 필수 요소 들어있는지 검사
+    for i in ['email', 'pw']:  # 필수 요소 들어있는지 검사
         if i not in data:
             raise BadRequest
 

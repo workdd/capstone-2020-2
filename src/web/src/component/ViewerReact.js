@@ -121,7 +121,6 @@ const ViewerReact = (props) => {
 
   const [load, setLoad] = useState(false);
   const [bin, setBin] = useState();
-  const [time, setTime] = useState();
   const [realtime, setRealtime] = useState("00:00:00");
 
   const onlyClick = (e) => {
