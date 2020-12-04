@@ -264,4 +264,4 @@ class Chat(Data):
                 break
             self.section.append([key, str(freq[key]), section_dic[key]])
             i += 1
-        self.print_section_hhmmss()
+        # self.print_section_hhmmss()

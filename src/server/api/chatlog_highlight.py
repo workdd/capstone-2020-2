@@ -9,6 +9,7 @@ from models.highlight import ChatHighlight
 from settings.utils import api
 from analyze.chat import *
 from api.ana_url import split_url
+from api.tasks import *
 
 
 app = Blueprint('chatlog_highlight', __name__, url_prefix='/api')
@@ -35,11 +36,9 @@ def get_chatlog_highlight(data, db):
     if query:
         return jsonify(query.highlight_json)
 
-    chat = Chat(url_result[0], url_result[1])
-    chat.download()
-    chat.analyze_highlight()
+    point = analyze_chatlog_highlight.apply_async(args=[url_result[0], url_result[1]])
 
-    result = {"highlight": chat.point}
+    result = {"highlight": point.get()}
     db.add(ChatHighlight(
         platform=url_result[0],
         videoid=url_result[1],

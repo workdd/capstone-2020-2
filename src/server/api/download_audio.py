@@ -11,6 +11,7 @@ from models.file import File
 from settings.utils import api
 from analyze.audio import *
 from api.ana_url import split_url
+from api.tasks import *
 
 
 app = Blueprint('download_audio', __name__, url_prefix='/api')
@@ -48,10 +49,8 @@ def get_chatlog(data, db):
     if highlight_query and file_query:
         return True
 
-    audio = Audio(platform, videoid, url)
-    audio.download()
-    audio.sound_extract()
+    data = download_audio.apply_async(args=[platform, videoid, url])
 
-    result = {"platform": audio.platform ,"videoid": audio.video_id, "url":url, "audio": audio.data}
+    result = {"platform": platform ,"videoid": videoid, "url":url, "audio": data.get()}
 
     return jsonify(result)

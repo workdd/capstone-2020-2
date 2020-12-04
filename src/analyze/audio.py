@@ -14,7 +14,7 @@ class Audio(Data):
         self.unit_of_time = 30
 
     def download(self):
-        dw_opts = {'format': 'worstaudio/worst', 'extractaudio': True, 'audioformat': "mp3",
+        dw_opts = {'format': 'worstaudio/worst', 'extractaudio': True, 'audioformat': "mp3", 'noprogress': True,
                    'outtmpl': "audio/" + self.platform + '/' + self.video_id + '_' + '%(playlist_index)s' + ".mp3"}
         try:
             with youtube_dl.YoutubeDL(dw_opts) as ydl:

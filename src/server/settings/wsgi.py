@@ -42,8 +42,9 @@ def create_wsgi():
     app.register_blueprint(api_file)
     app.register_blueprint(api_sound_highlight)
     app.register_blueprint(api_chatlog_highlight)
-    app.register_blueprint(api_download_chatlog)
-    app.register_blueprint(api_download_audio)
+    # app.register_blueprint(api_download_chatlog)
+    # app.register_blueprint(api_download_audio)
 
     CORS(app)
+
     return app

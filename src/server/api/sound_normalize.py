@@ -10,6 +10,7 @@ from settings.settings import MODE
 from settings.utils import api
 from analyze.audio import *
 from api.ana_url import split_url
+from api.tasks import *
 import boto3
 
 s3 = boto3.resource('s3')
@@ -69,14 +70,10 @@ def get_sound_normalize(data, db):
 
     url_result = split_url(url)
 
-    if url_result != False:
-        audio = Audio(url_result[0], url_result[1], url)
-        audio.download()
-        audio.sound_extract()
-        audio.save_graph()
-        image = {'url': url, 'name': f"./audio/normalizeAudio/{url_result[0]}/{url_result[1]}.png"}
-
-        image_path = upload_image(image, db, url_result[0], url_result[1])
-        return jsonify({'image_url': image_path})
-    else:
+    if url_result == False:
         raise NotAcceptable  # 유효하지 않은 URL
+
+    image = analyze_audio_normalize.apply_async(args=[url_result[0], url_result[1], url])
+
+    image_path = upload_image(image.get(), db, url_result[0], url_result[1])
+    return jsonify({'image_url': image_path})

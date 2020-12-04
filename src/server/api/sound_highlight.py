@@ -10,6 +10,8 @@ from models.highlight import SoundHighlight
 from settings.utils import api
 from analyze.audio import *
 from api.ana_url import split_url
+from api.tasks import *
+
 
 app = Blueprint('SNDhighlight', __name__, url_prefix='/api')
 
@@ -48,19 +50,17 @@ def get_sound_highlight(data, db):
 
     url_result = split_url(url)
 
-    if url_result != False:
-        audio = Audio(url_result[0], url_result[1], url)
-        audio.download()
-        audio.sound_extract()
-        audio.analyze_highlight()
-
-        result = {"highlight": audio.point}
-        new_sound_highlight = SoundHighlight(
-            url=url,
-            highlight_json=result
-        )
-        db.add(new_sound_highlight)
-        db.commit()
-        return jsonify(result)
-    else:
+    if url_result == False:
         raise NotAcceptable  # 유효하지 않은 URL
+
+    point = analyze_audio_highlight.apply_async(args=[platform, videoid, url])
+
+    result = {"highlight": point.get()}
+    new_sound_highlight = SoundHighlight(
+        url=url,
+        highlight_json=result
+    )
+    db.add(new_sound_highlight)
+    db.commit()
+    return jsonify(result)
+

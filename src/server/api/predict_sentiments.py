@@ -6,6 +6,7 @@ from werkzeug.exceptions import BadRequest
 from models.highlight import Predict
 from settings.utils import api
 from flask import Blueprint, jsonify
+from api.tasks import *
 import numpy
 import math
 import sys
@@ -30,57 +31,11 @@ def get_predict(data, db):
     if query:
         return query.predict_json
 
-    chat = Chat(isURLValid[0], isURLValid[1])
-    chat.download()
-
-    with open('./chatlog/{}/{}.txt'.format(isURLValid[0], isURLValid[1]), encoding='utf-8') as f:
-        content = f.read().split('\n')
-
-    second = []
-    comment = []
-    for i in range(0, len(content) - 1):
-        splited_chat = content[i].split('\t')
-        if len(splited_chat) < 3:
-            continue
-        second.append(splited_chat[0])
-        comment.append(splited_chat[2])
-
-    predict = numpy.transpose(
-        [[s[1:-1] for s in second], predict_pos_neg(comment)])
-
-    if len(second) < 1 or len(comment) < 1:
-        raise BadRequest
-
-    endSecond = int(second[-1][1:-1])
-    inc = math.floor(endSecond / 100.0) if endSecond >= 100.0 else 1.0
-
-    predict_per_unitsecond = {
-        'pos': [],
-        'neg': []
-    }
-    x = inc
-    pos = 0
-    neg = 0
-    for p in predict:
-        if int(p[0]) > x:
-            x += inc
-            predict_per_unitsecond['pos'].append(pos)
-            predict_per_unitsecond['neg'].append(neg)
-            pos = 0
-            neg = 0
-        if int(p[1]) == 1:
-            pos += 1
-        elif int(p[1]) == 0:
-            neg += 1
-
-    result = {
-        'bin': inc,
-        'predict': predict_per_unitsecond
-    }
+    result = analyze_chatlog_sentiment.apply_async(args=[isURLValid[0], isURLValid[1]])
     
     new_predict = Predict(
         url=url,
-        posneg_json=result,
+        posneg_json=result.get(),
     )
     db.add(new_predict)
     db.commit()

@@ -11,8 +11,8 @@ from models.highlight import Predict7
 from models.highlight import Predict
 
 from settings.utils import api
-from analyze.chat import *
 from api.ana_url import split_url
+from api.tasks import *
 
 
 app = Blueprint('download_chatlog', __name__, url_prefix='/api')
@@ -58,9 +58,8 @@ def get_chatlog(data, db):
     if highlight_query and keyword_query and sentiment_query and emotion_query:
         return True
 
-    chat = Chat(platform, videoid)
-    chat.download()
+    chatlog = download_chatlog.apply_async(args=[platform, videoid])
 
-    result = {"platform": chat.platform ,"videoid": chat.video_id, "chatlog": chat.chatlog}
+    result = {"platform": platform ,"videoid": videoid, "chatlog": chatlog.get()}
 
     return jsonify(result)

@@ -27,7 +27,7 @@ class Data:
 
         self.point = count[0:3] if len(self.point) < 3 else self.point[0:3]
         self.point.sort(key=lambda ele: ele[0])
-        self.print_point_hhmmss()
+        # self.print_point_hhmmss()
 
     def print_point_hhmmss(self):
         for i in range(len(self.point)):
